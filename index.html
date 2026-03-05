@@ -218,6 +218,35 @@ footer { background: var(--sand); border-top: 1px solid var(--stone); padding: 4
 .footer-links a:hover { color: var(--ink); }
 .footer-copy { font-size: 12px; color: var(--muted); }
 
+/* SURVEY MODAL */
+.survey-overlay { position: fixed; inset: 0; background: rgba(20,18,16,0.55); backdrop-filter: blur(6px); z-index: 150; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.35s; }
+.survey-overlay.open { opacity: 1; pointer-events: all; }
+.survey-card { background: var(--white); border-radius: 28px; padding: 44px 40px; width: 100%; max-width: 520px; position: relative; transform: translateY(28px) scale(0.97); transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1); box-shadow: 0 32px 80px rgba(0,0,0,0.15); }
+.survey-overlay.open .survey-card { transform: translateY(0) scale(1); }
+.survey-close { position: absolute; top: 18px; right: 18px; background: var(--sand); border: none; border-radius: 50%; width: 34px; height: 34px; color: var(--muted); cursor: pointer; font-size: 15px; display: flex; align-items: center; justify-content: center; }
+.survey-wave { font-size: 36px; margin-bottom: 14px; }
+.survey-title { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 900; letter-spacing: -0.5px; margin-bottom: 8px; line-height: 1.2; }
+.survey-title em { font-style: italic; color: var(--coral); }
+.survey-sub { color: var(--muted); font-size: 14px; line-height: 1.6; margin-bottom: 28px; font-weight: 300; }
+.survey-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+.survey-option { background: var(--sand); border: 1.5px solid var(--stone); border-radius: 14px; padding: 13px 16px; font-size: 14px; font-weight: 500; cursor: pointer; text-align: left; font-family: 'Outfit', sans-serif; color: var(--ink); transition: all 0.2s; display: flex; align-items: center; gap: 10px; line-height: 1.3; }
+.survey-option:hover { border-color: var(--coral); background: var(--coral-soft); color: var(--coral); }
+.survey-option.selected { background: var(--coral-soft); border-color: var(--coral); color: var(--coral); font-weight: 600; }
+.survey-option.other-option { grid-column: span 2; }
+.survey-other-input { width: 100%; background: var(--sand); border: 1.5px solid var(--stone); border-radius: 12px; padding: 12px 16px; color: var(--ink); font-size: 14px; font-family: 'Outfit', sans-serif; outline: none; transition: border-color 0.2s; margin-bottom: 16px; display: none; }
+.survey-other-input.visible { display: block; }
+.survey-other-input:focus { border-color: var(--coral); background: #fff; }
+.survey-submit { width: 100%; background: var(--coral); color: #fff; border: none; border-radius: 50px; padding: 14px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: 'Outfit', sans-serif; transition: opacity 0.2s; }
+.survey-submit:hover { opacity: 0.88; }
+.survey-submit:disabled { opacity: 0.4; cursor: not-allowed; }
+.survey-thanks { display: none; text-align: center; padding: 16px 0; }
+.survey-thanks.visible { display: block; }
+.survey-thanks-emoji { font-size: 52px; margin-bottom: 16px; }
+.survey-thanks h3 { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; margin-bottom: 10px; }
+.survey-thanks p { color: var(--muted); font-size: 14px; line-height: 1.7; font-weight: 300; }
+.survey-thanks .see-events { display: inline-block; margin-top: 20px; background: var(--ink); color: var(--white); padding: 12px 28px; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 14px; transition: background 0.2s; }
+.survey-thanks .see-events:hover { background: var(--coral); }
+
 /* TOAST */
 .toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--ink); color: #fff; border-radius: 50px; padding: 12px 24px; font-size: 14px; font-weight: 500; z-index: 999; opacity: 0; transition: all 0.3s; pointer-events: none; white-space: nowrap; }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
@@ -767,6 +796,97 @@ function showToast(msg) {
 document.addEventListener('keydown', e => { if (e.key==='Escape') { closeAuth(); closeProfile(); closeRSVPModal(); } });
 
 loadUser(); updateNavBtn(); renderHeroCards(); renderMarquee(); renderEvents();
+</script>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- SURVEY MODAL -->
+<div class="survey-overlay" id="surveyOverlay" onclick="if(event.target===this)closeSurvey()">
+  <div class="survey-card">
+    <button class="survey-close" onclick="closeSurvey()">✕</button>
+    <div id="surveyForm">
+      <div class="survey-wave">👋</div>
+      <div class="survey-title">Hey! What brings you <em>here?</em></div>
+      <div class="survey-sub">Pick everything that resonates — helps us show you the most relevant events.</div>
+      <div class="survey-options">
+        <button class="survey-option" onclick="toggleSurveyOption(this)" data-val="Make new friends">🤝 Make new friends</button>
+        <button class="survey-option" onclick="toggleSurveyOption(this)" data-val="Try new activities">🎯 Try new activities</button>
+        <button class="survey-option" onclick="toggleSurveyOption(this)" data-val="Get out of the house more">🚪 Get out more</button>
+        <button class="survey-option" onclick="toggleSurveyOption(this)" data-val="Connect with like-minded people">💛 Find my people</button>
+        <button class="survey-option" onclick="toggleSurveyOption(this)" data-val="Find low-pressure social events">😌 Low-pressure hangouts</button>
+        <button class="survey-option" onclick="toggleSurveyOption(this)" data-val="New to Denver">📍 New to Denver</button>
+        <button class="survey-option other-option" onclick="toggleOther(this)" data-val="other">✏️ Something else...</button>
+      </div>
+      <input class="survey-other-input" id="surveyOtherInput" placeholder="Tell us what's on your mind...">
+      <button class="survey-submit" id="surveySubmitBtn" onclick="submitSurvey()" disabled>Show Me What's Coming Up →</button>
+    </div>
+    <div class="survey-thanks" id="surveyThanks">
+      <div class="survey-thanks-emoji">🎉</div>
+      <h3 id="surveyThanksTitle">We got you.</h3>
+      <p id="surveyThanksMsg">Thanks for sharing — you'll fit right in here.</p>
+      <a href="#events" class="see-events" onclick="closeSurvey()">See Upcoming Events →</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const THANKS_MESSAGES = {
+  'Make new friends': { title: "That's what we're here for. 🤝", msg: "Every event is built around meeting people. Small groups, real conversations — you're in the right place." },
+  'Try new activities': { title: "Adventure awaits. 🎯", msg: "From bowling to pottery to strategy games — we keep things fresh every month. Scroll down and see what's up." },
+  'Get out of the house more': { title: "First step taken. 🚪", msg: "Picking an event and showing up is the hardest part. After that it's just fun. Let's find one that fits." },
+  'Connect with like-minded people': { title: "You'll find them here. 💛", msg: "Our community skews curious, creative, and genuinely kind. Small groups mean you actually get to talk." },
+  'Find low-pressure social events': { title: "Zero pressure, promise. 😌", msg: "No forced icebreakers, no networking energy. Just good activities with good people. Come as you are." },
+  'New to Denver': { title: "Welcome to Denver! 📍", msg: "Moving somewhere new is hard. Come to a dinner or game night — you'll leave with at least one real connection." },
+};
+
+function toggleSurveyOption(el) {
+  el.classList.toggle('selected');
+  updateSurveyBtn();
+}
+function toggleOther(el) {
+  el.classList.toggle('selected');
+  const inp = document.getElementById('surveyOtherInput');
+  inp.classList.toggle('visible', el.classList.contains('selected'));
+  if (el.classList.contains('selected')) inp.focus();
+  updateSurveyBtn();
+}
+function updateSurveyBtn() {
+  document.getElementById('surveySubmitBtn').disabled = document.querySelectorAll('.survey-option.selected').length === 0;
+}
+function submitSurvey() {
+  const selected = [...document.querySelectorAll('.survey-option.selected:not(.other-option)')].map(b => b.dataset.val);
+  const otherVal = document.getElementById('surveyOtherInput').value.trim();
+  if (document.querySelector('.survey-option.other-option.selected') && otherVal) selected.push(otherVal);
+  try {
+    const responses = JSON.parse(localStorage.getItem('dsn_survey_responses') || '[]');
+    responses.push({ answers: selected, date: new Date().toISOString() });
+    localStorage.setItem('dsn_survey_responses', JSON.stringify(responses));
+  } catch(e) {}
+  const msg = THANKS_MESSAGES[selected[0]] || { title: "Good to know! 🙌", msg: "There's something here for everyone — scroll down and find your next hangout." };
+  document.getElementById('surveyThanksTitle').textContent = msg.title;
+  document.getElementById('surveyThanksMsg').textContent = msg.msg;
+  document.getElementById('surveyForm').style.display = 'none';
+  document.getElementById('surveyThanks').classList.add('visible');
+  try { sessionStorage.setItem('dsn_survey_done', '1'); } catch(e) {}
+}
+function closeSurvey() {
+  document.getElementById('surveyOverlay').classList.remove('open');
+  try { sessionStorage.setItem('dsn_survey_done', '1'); } catch(e) {}
+}
+function initSurvey() {
+  try { if (sessionStorage.getItem('dsn_survey_done') || localStorage.getItem('dsn_survey_seen')) return; } catch(e) {}
+  let triggered = false;
+  const trigger = () => {
+    if (triggered || window.scrollY < 220) return;
+    triggered = true;
+    window.removeEventListener('scroll', trigger);
+    setTimeout(() => document.getElementById('surveyOverlay').classList.add('open'), 400);
+    try { localStorage.setItem('dsn_survey_seen', '1'); } catch(e) {}
+  };
+  window.addEventListener('scroll', trigger, { passive: true });
+}
+initSurvey();
 </script>
 </body>
 </html>
