@@ -371,7 +371,7 @@ function renderTable(search = '') {
       <div class="event-row">
         <div class="row-emoji">${e.emoji}</div>
         <div class="row-info">
-          <div class="row-name">${e.title}</div>
+          <div class="row-name">${e.title} ${e.owner !== 'admin' ? '<span style="font-size:10px;background:rgba(100,180,255,0.15);color:#60aaff;padding:2px 8px;border-radius:50px;font-weight:600;margin-left:6px">MEMBER</span>' : ''}</div>
           <div class="row-location">📍 ${e.location}</div>
         </div>
         <div class="row-date">${e.date}</div>
@@ -436,7 +436,7 @@ function saveEvent() {
   }
 
   const info = tagMap[tag] || tagMap['Other'];
-  const eventData = { emoji, tag, tagClass: info.cls, imgClass: info.img, title, desc, date, time, location, spots, total };
+  const eventData = { emoji, tag, tagClass: info.cls, imgClass: info.img, title, desc, date, time, location, spots, total, owner: 'admin' };
 
   if (editingId) {
     const idx = events.findIndex(e => e.id === editingId);

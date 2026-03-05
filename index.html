@@ -279,7 +279,7 @@ footer { background: var(--sand); border-top: 1px solid var(--stone); padding: 4
 <!-- EVENTS -->
 <div class="events-section" id="events">
   <div class="section-eyebrow">Upcoming Events</div>
-  <h2 class="section-title">Pick your next<br><em>adventure.</em></h2>
+  <h2 class="section-title" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">Pick your next<br><em>adventure.</em> <button id="addEventBtn" onclick="openAddEvent()" style="display:none;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;background:var(--coral);color:#fff;border:none;border-radius:50px;padding:12px 24px;cursor:pointer;white-space:nowrap;font-style:normal;letter-spacing:0">+ Post an Event</button></h2>
   <div class="events-grid" id="eventsGrid"></div>
 </div>
 
@@ -426,18 +426,68 @@ footer { background: var(--sand); border-top: 1px solid var(--stone); padding: 4
   </div>
 </div>
 
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
+<!-- ADD EVENT MODAL (members) -->
+<div class="modal-overlay" id="addEventOverlay" onclick="if(event.target===this)closeAddEvent()" style="z-index:210">
+  <div class="modal" style="max-width:520px">
+    <button class="modal-close" onclick="closeAddEvent()">✕</button>
+    <div class="modal-emoji">📅</div>
+    <div class="modal-title">Post an Event</div>
+    <div class="modal-meta">Share something fun with the community. Your event goes live right away.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px">
+      <div class="modal-field" style="grid-column:span 2"><label>Event Title</label><input type="text" id="aeTitle" placeholder="e.g. Trivia Night at Punch Bowl"></div>
+      <div class="modal-field" style="grid-column:span 2"><label>Description</label><input type="text" id="aeDesc" placeholder="What's the vibe? Who's it for?"></div>
+      <div class="modal-field"><label>Date</label><input type="text" id="aeDate" placeholder="Sat, April 12"></div>
+      <div class="modal-field"><label>Time</label><input type="text" id="aeTime" placeholder="7:00 PM"></div>
+      <div class="modal-field" style="grid-column:span 2"><label>Location</label><input type="text" id="aeLocation" placeholder="Venue name, neighborhood"></div>
+      <div class="modal-field"><label>Spots Available</label><input type="number" id="aeSpots" placeholder="6" min="1"></div>
+      <div class="modal-field"><label>Category</label><select id="aeTag"><option value="Dinner">🍽️ Dinner</option><option value="Board Games">🎲 Board Games</option><option value="Bowling">🎳 Bowling</option><option value="Pottery">🏺 Pottery</option><option value="Other">✨ Other</option></select></div>
+    </div>
+    <button class="modal-submit" onclick="submitMemberEvent()" style="margin-top:16px">Post Event →</button>
+  </div>
+</div>
+
+<script>
+const tagMap = { 'Dinner':{cls:'tag-dinner',img:'dinner',emoji:'🍽️'}, 'Board Games':{cls:'tag-games',img:'games',emoji:'🎲'}, 'Bowling':{cls:'tag-bowling',img:'bowling',emoji:'🎳'}, 'Pottery':{cls:'tag-pottery',img:'pottery',emoji:'🏺'}, 'Other':{cls:'tag-games',img:'games',emoji:'✨'} };
+
+function openAddEvent() {
+  if (!currentUser) { openAuth(); return; }
+  document.getElementById('addEventOverlay').classList.add('open');
+}
+function closeAddEvent() { document.getElementById('addEventOverlay').classList.remove('open'); }
+
+function submitMemberEvent() {
+  const title = document.getElementById('aeTitle').value.trim();
+  const desc = document.getElementById('aeDesc').value.trim();
+  const date = document.getElementById('aeDate').value.trim();
+  const time = document.getElementById('aeTime').value.trim();
+  const location = document.getElementById('aeLocation').value.trim();
+  const spots = parseInt(document.getElementById('aeSpots').value);
+  const tag = document.getElementById('aeTag').value;
+  if (!title || !date || !location || isNaN(spots)) { showToast('Please fill in all fields.'); return; }
+  const info = tagMap[tag] || tagMap['Other'];
+  const newId = Math.max(0, ...events.map(e => e.id)) + 1;
+  events.push({ id: newId, emoji: info.emoji, tag, tagClass: info.cls, imgClass: info.img, featured: false, owner: currentUser.email, title, desc, date, time, location, spots, total: spots });
+  try { localStorage.setItem('dsn_events', JSON.stringify(events)); } catch(e) {}
+  closeAddEvent(); renderEvents(); renderHeroCards();
+  showToast('Your event is live! 🎉');
+}
+
+function updateAddEventBtn() {
+  const btn = document.getElementById('addEventBtn');
+  if (btn) btn.style.display = currentUser ? 'inline-block' : 'none';
+}
+</script>
 
 <script>
 // ─── EVENTS ───
+const ADMIN_EMAIL = 'seth@denversocialnights.com'; // change to your real email
 const DEFAULT_EVENTS = [
-  { id:1, emoji:"🍜", tag:"Dinner", tagClass:"tag-dinner", imgClass:"dinner", featured:true, title:"Dinner at Bistro King Asian", desc:"Authentic Asian cuisine in Englewood — small group, great food, easy conversation. 4.2 stars and consistently packed for a reason.", date:"Sat, March 7", time:"6:20 PM", location:"3542 S Fox St, Englewood", spots:4, total:7 },
-  { id:2, emoji:"🎲", tag:"Board Games", tagClass:"tag-games", imgClass:"games", title:"Game Night at Meeples", desc:"Settlers of Catan, Ticket to Ride, Codenames and more. Beginners absolutely welcome.", date:"Sat, March 8", time:"6:00 – 9:00 PM", location:"Meeples Games, Denver", spots:5, total:12 },
-  { id:3, emoji:"🎳", tag:"Bowling", tagClass:"tag-bowling", imgClass:"bowling", title:"Cosmic Bowling Night", desc:"Glow lanes, chill music, and zero competitive pressure. Pure vibes.", date:"Fri, March 14", time:"7:30 – 10:00 PM", location:"Bowlero Denver", spots:8, total:16 },
-  { id:4, emoji:"🍽️", tag:"Dinner", tagClass:"tag-dinner", imgClass:"dinner", title:"Group Dinner — RiNo", desc:"Sit-down dinner in the RiNo Art District. Small table, good food, real conversation.", date:"Sat, March 22", time:"7:00 PM", location:"RiNo, Denver", spots:3, total:7 },
-  { id:5, emoji:"🏺", tag:"Pottery", tagClass:"tag-pottery", imgClass:"pottery", title:"Pottery Painting Social", desc:"Pick a piece, paint it your way. Zero experience needed.", date:"Sun, March 30", time:"2:00 – 5:00 PM", location:"Color Me Mine, Denver", spots:6, total:10 },
-  { id:6, emoji:"🎲", tag:"Board Games", tagClass:"tag-games", imgClass:"games", title:"Strategy Game Night", desc:"Pandemic, Wingspan, Terraforming Mars.", date:"Sat, April 5", time:"5:00 – 9:00 PM", location:"Meeples Games, Denver", spots:0, total:10 }
+  { id:1, emoji:"🍜", tag:"Dinner", tagClass:"tag-dinner", imgClass:"dinner", featured:true, owner:'admin', title:"Dinner at Bistro King Asian", desc:"Authentic Asian cuisine in Englewood — small group, great food, easy conversation. 4.2 stars and consistently packed for a reason.", date:"Sat, March 7", time:"6:20 PM", location:"3542 S Fox St, Englewood", spots:4, total:7 },
+  { id:2, emoji:"🎲", tag:"Board Games", tagClass:"tag-games", imgClass:"games", owner:'admin', title:"Game Night at Meeples", desc:"Settlers of Catan, Ticket to Ride, Codenames and more. Beginners absolutely welcome.", date:"Sat, March 8", time:"6:00 – 9:00 PM", location:"Meeples Games, Denver", spots:5, total:12 },
+  { id:3, emoji:"🎳", tag:"Bowling", tagClass:"tag-bowling", imgClass:"bowling", owner:'admin', title:"Cosmic Bowling Night", desc:"Glow lanes, chill music, and zero competitive pressure. Pure vibes.", date:"Fri, March 14", time:"7:30 – 10:00 PM", location:"Bowlero Denver", spots:8, total:16 },
+  { id:4, emoji:"🍽️", tag:"Dinner", tagClass:"tag-dinner", imgClass:"dinner", owner:'admin', title:"Group Dinner — RiNo", desc:"Sit-down dinner in the RiNo Art District. Small table, good food, real conversation.", date:"Sat, March 22", time:"7:00 PM", location:"RiNo, Denver", spots:3, total:7 },
+  { id:5, emoji:"🏺", tag:"Pottery", tagClass:"tag-pottery", imgClass:"pottery", owner:'admin', title:"Pottery Painting Social", desc:"Pick a piece, paint it your way. Zero experience needed.", date:"Sun, March 30", time:"2:00 – 5:00 PM", location:"Color Me Mine, Denver", spots:6, total:10 },
+  { id:6, emoji:"🎲", tag:"Board Games", tagClass:"tag-games", imgClass:"games", owner:'admin', title:"Strategy Game Night", desc:"Pandemic, Wingspan, Terraforming Mars.", date:"Sat, April 5", time:"5:00 – 9:00 PM", location:"Meeples Games, Denver", spots:0, total:10 }
 ];
 let events = [];
 try { const s = localStorage.getItem('dsn_events'); events = s ? JSON.parse(s) : [...DEFAULT_EVENTS]; } catch(e) { events = [...DEFAULT_EVENTS]; }
@@ -467,6 +517,7 @@ function updateNavBtn() {
     icon.textContent = '👤';
     text.textContent = 'Sign In';
   }
+  updateAddEventBtn();
 }
 function handleNavLoginClick() {
   if (currentUser) openProfile();
@@ -657,22 +708,48 @@ function renderMarquee() {
   const items = ['🍜 Asian Dinners','🎲 Game Nights','🎳 Bowling Nights','🏺 Pottery Painting','🍽️ Group Dinners','✨ New Events Monthly','📍 All Over Denver','💛 Everyone Welcome'];
   document.getElementById('marqueeTrack').innerHTML = [...items,...items].map(i => `<div class="marquee-item"><span>·</span>${i}</div>`).join('');
 }
+function isAdmin() { return currentUser && currentUser.email === ADMIN_EMAIL; }
+function isOwner(e) { 
+  if (!currentUser) return false;
+  if (isAdmin()) return true;
+  return e.owner === currentUser.email;
+}
+
+function deleteEvent(id, ev) {
+  ev.stopPropagation();
+  const e = events.find(x => x.id === id);
+  if (!e) return;
+  if (!isOwner(e)) { showToast("You can't delete someone else's event."); return; }
+  if (!confirm(`Delete "${e.title}"?`)) return;
+  const idx = events.findIndex(x => x.id === id);
+  events.splice(idx, 1);
+  try { localStorage.setItem('dsn_events', JSON.stringify(events)); } catch(e) {}
+  renderEvents(); renderHeroCards();
+  showToast('Event deleted.');
+}
+
 function renderEvents() {
+  const isLoggedIn = !!currentUser;
   document.getElementById('eventsGrid').innerHTML = events.map((e,i) => {
     const isFull = e.spots === 0;
     const almostFull = e.spots > 0 && e.spots <= 2;
     const spotsText = isFull ? '😔 Sold out' : almostFull ? `🔥 Only ${e.spots} spot${e.spots>1?'s':''} left` : `✅ ${e.spots} spots open`;
+    const canManage = currentUser && (isAdmin() || e.owner === currentUser.email);
+    const ownerBadge = e.owner !== 'admin' ? `<span style="font-size:11px;color:var(--muted);margin-left:auto;padding-right:4px">👤 Member event</span>` : '';
     return `
       <div class="event-card${e.featured?' featured':''}" onclick="${isFull?'':` openRSVP(events[${i}])`}">
         <div class="event-img ${e.imgClass}"></div>
         <div class="event-body">
-          <div class="event-top"><div class="event-tag ${e.tagClass}">${e.tag}</div><div class="event-date">${e.date}</div></div>
+          <div class="event-top"><div class="event-tag ${e.tagClass}">${e.tag}</div>${ownerBadge}<div class="event-date">${e.date}</div></div>
           <div class="event-title">${e.title}</div>
           <div class="event-desc">${e.desc}</div>
           <div class="event-location">📍 ${e.location} · ${e.time}</div>
           <div class="event-footer">
             <div class="spots-info">${spotsText}</div>
-            <button class="rsvp-btn${isFull?' full':''}" id="btn-${e.id}" onclick="event.stopPropagation();${isFull?'':` openRSVP(events[${i}])`}">${isFull?'Full':'RSVP →'}</button>
+            <div style="display:flex;gap:8px;align-items:center">
+              ${canManage ? `<button style="background:transparent;border:none;color:var(--muted);font-size:13px;cursor:pointer;padding:4px 8px;border-radius:8px" onclick="event.stopPropagation();deleteEvent(${e.id},event)" title="Delete event">🗑️</button>` : ''}
+              <button class="rsvp-btn${isFull?' full':''}" id="btn-${e.id}" onclick="event.stopPropagation();${isFull?'':` openRSVP(events[${i}])`}">${isFull?'Full':'RSVP →'}</button>
+            </div>
           </div>
         </div>
       </div>`;
