@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Suggestion Board — Denver Social Nights</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #F0F6FC; --white: #FAFCFF; --ink: #151210;
+  --coral: #F05A28; --coral-soft: #FFF0EB; --sand: #E2EEF7;
+  --stone: #CCDEED; --muted: #8C8480;
+  --green: #16a34a; --green-soft: #f0fdf4;
+  --yellow: #d97706; --yellow-soft: #fffbeb;
+  --purple: #7c3aed; --purple-soft: #f5f3ff;
+}
+html { scroll-behavior: smooth; }
+body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; }
+
+nav {
+  background: rgba(240,246,252,0.95); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--stone); padding: 0 48px; height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 50;
+}
+.nav-logo { font-family: 'Playfair Display', serif; font-weight: 900; font-size: 17px; text-decoration: none; color: var(--ink); }
+.nav-logo span { color: var(--coral); }
+.nav-links { display: flex; gap: 24px; list-style: none; align-items: center; }
+.nav-links a { color: var(--muted); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; }
+.nav-links a:hover, .nav-links a.active { color: var(--ink); }
+.nav-login-btn { background: transparent; border: 1.5px solid var(--stone); color: var(--ink); padding: 8px 18px; border-radius: 50px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Outfit', sans-serif; display: flex; align-items: center; gap: 7px; transition: border-color 0.2s; }
+.nav-login-btn:hover { border-color: var(--coral); color: var(--coral); }
+.nav-login-btn.logged-in { background: var(--coral); color: #fff; border-color: var(--coral); }
+
+.page { max-width: 860px; margin: 0 auto; padding: 60px 40px; }
+
+.page-eyebrow { font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--coral); font-weight: 600; margin-bottom: 12px; }
+.page-title { font-family: 'Playfair Display', serif; font-size: clamp(36px, 5vw, 56px); font-weight: 900; letter-spacing: -1px; line-height: 1.05; margin-bottom: 16px; }
+.page-title em { font-style: italic; color: var(--coral); }
+.page-sub { color: var(--muted); font-size: 16px; line-height: 1.7; font-weight: 300; margin-bottom: 48px; max-width: 520px; }
+
+/* SUBMIT */
+.submit-card { background: var(--white); border: 1.5px solid var(--stone); border-radius: 20px; padding: 28px; margin-bottom: 40px; }
+.submit-card h3 { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+.submit-row { display: flex; gap: 12px; }
+.submit-input { flex: 1; background: var(--sand); border: 1.5px solid var(--stone); border-radius: 12px; padding: 13px 16px; color: var(--ink); font-size: 15px; font-family: 'Outfit', sans-serif; outline: none; transition: border-color 0.2s; }
+.submit-input:focus { border-color: var(--coral); background: #fff; }
+.submit-btn { background: var(--coral); color: #fff; border: none; border-radius: 50px; padding: 13px 28px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: 'Outfit', sans-serif; white-space: nowrap; transition: opacity 0.2s; }
+.submit-btn:hover { opacity: 0.88; }
+.submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.submit-note { font-size: 12px; color: var(--muted); margin-top: 10px; }
+
+/* FILTERS */
+.filters { display: flex; gap: 8px; margin-bottom: 28px; flex-wrap: wrap; }
+.filter-btn { background: var(--white); border: 1.5px solid var(--stone); border-radius: 50px; padding: 8px 18px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'Outfit', sans-serif; color: var(--muted); transition: all 0.2s; }
+.filter-btn:hover { border-color: var(--coral); color: var(--coral); }
+.filter-btn.active { background: var(--coral); border-color: var(--coral); color: #fff; }
+
+/* SUGGESTIONS */
+.suggestions-list { display: flex; flex-direction: column; gap: 14px; }
+.suggestion-card { background: var(--white); border: 1.5px solid var(--stone); border-radius: 18px; padding: 20px 24px; display: flex; gap: 16px; align-items: flex-start; transition: border-color 0.2s, box-shadow 0.2s; }
+.suggestion-card:hover { border-color: var(--coral); box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+.suggestion-card.pinned { border-color: var(--coral); background: linear-gradient(135deg, #FFF7F4, var(--white)); }
+
+.vote-col { display: flex; flex-direction: column; align-items: center; gap: 4px; flex-shrink: 0; }
+.vote-btn { background: var(--sand); border: 1.5px solid var(--stone); border-radius: 10px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; transition: all 0.2s; color: var(--muted); }
+.vote-btn:hover { border-color: var(--coral); color: var(--coral); background: var(--coral-soft); }
+.vote-btn.voted { background: var(--coral-soft); border-color: var(--coral); color: var(--coral); }
+.vote-count { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 900; color: var(--ink); line-height: 1; }
+.vote-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+.suggestion-body { flex: 1; }
+.suggestion-top { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
+.suggestion-title { font-weight: 600; font-size: 16px; }
+.suggestion-badge { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 50px; }
+.badge-planned { background: var(--yellow-soft); color: var(--yellow); }
+.badge-done { background: var(--green-soft); color: var(--green); }
+.badge-pinned { background: var(--coral-soft); color: var(--coral); }
+.badge-new { background: var(--purple-soft); color: var(--purple); }
+.suggestion-desc { font-size: 14px; color: var(--muted); line-height: 1.6; font-weight: 300; margin-bottom: 12px; }
+.suggestion-footer { display: flex; align-items: center; gap: 12px; }
+.suggestion-author { font-size: 12px; color: var(--muted); }
+.suggestion-date { font-size: 12px; color: var(--muted); }
+.suggestion-actions { margin-left: auto; display: flex; gap: 8px; }
+.action-btn { background: transparent; border: 1px solid var(--stone); border-radius: 8px; padding: 4px 12px; font-size: 12px; font-weight: 500; cursor: pointer; font-family: 'Outfit', sans-serif; color: var(--muted); transition: all 0.2s; }
+.action-btn:hover { border-color: var(--coral); color: var(--coral); }
+.action-btn.del { }
+.action-btn.del:hover { border-color: #e53e3e; color: #e53e3e; }
+
+.empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
+.empty-state .emoji { font-size: 48px; margin-bottom: 16px; }
+.empty-state p { font-size: 15px; line-height: 1.6; }
+
+.toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--ink); color: #fff; border-radius: 50px; padding: 12px 24px; font-size: 14px; font-weight: 500; z-index: 999; opacity: 0; transition: all 0.3s; pointer-events: none; white-space: nowrap; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+@media (max-width: 640px) {
+  nav { padding: 0 20px; } .nav-links { display: none; }
+  .page { padding: 40px 20px; }
+  .submit-row { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">Denver Social <span>Nights</span></a>
+  <ul class="nav-links">
+    <li><a href="/#events">Events</a></li>
+    <li><a href="/members.html">Members</a></li>
+    <li><a href="/suggestions.html" class="active">Suggestions</a></li>
+  </ul>
+  <button class="nav-login-btn" id="navLoginBtn" onclick="handleNavClick()">
+    <span id="navLoginIcon">👤</span>
+    <span id="navLoginText">Sign In</span>
+  </button>
+</nav>
+
+<div class="page">
+  <div class="page-eyebrow">Community</div>
+  <h1 class="page-title">What should we do <em>next?</em></h1>
+  <p class="page-sub">Got an idea for an event, activity, or feature? Drop it here. The community votes and the best ideas actually happen.</p>
+
+  <div class="submit-card">
+    <h3>Drop your idea 💡</h3>
+    <div class="submit-row">
+      <input class="submit-input" id="submitInput" placeholder="e.g. Escape room night, rooftop hangout, trivia at a bar..." onkeydown="if(event.key==='Enter') submitSuggestion()">
+      <button class="submit-btn" id="submitBtn" onclick="submitSuggestion()">Post Idea</button>
+    </div>
+    <div class="submit-note" id="submitNote">Sign in to post an idea and vote on others.</div>
+  </div>
+
+  <div class="filters">
+    <button class="filter-btn active" onclick="setFilter('all', this)">All Ideas</button>
+    <button class="filter-btn" onclick="setFilter('top', this)">🔥 Top Voted</button>
+    <button class="filter-btn" onclick="setFilter('new', this)">✨ Newest</button>
+    <button class="filter-btn" onclick="setFilter('planned', this)">📋 Planned</button>
+    <button class="filter-btn" onclick="setFilter('done', this)">✅ Done</button>
+  </div>
+
+  <div class="suggestions-list" id="suggestionsList"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const ADMIN_EMAIL = 'stharpe98@gmail.com';
+
+const DEFAULT_SUGGESTIONS = [
+  { id:1, title:"Escape room night", desc:"Book a private escape room for the group — great for team bonding and problem solving!", votes:14, voters:[], author:"The Community", date:"Feb 28", status:"planned", pinned:true },
+  { id:2, title:"Rooftop hangout this summer", desc:"A casual rooftop bar meetup when the weather gets warm. Denver has so many good spots.", votes:11, voters:[], author:"A member", date:"Mar 1", status:"", pinned:false },
+  { id:3, title:"Trivia night at a bar", desc:"Classic pub trivia — teams of 4-5, low pressure, super fun. Works great for meeting new people.", votes:9, voters:[], author:"A member", date:"Mar 2", status:"", pinned:false },
+  { id:4, title:"Cooking class together", desc:"Learn to make a dish together — ramen, sushi, pasta. Lots of places in Denver do group classes.", votes:7, voters:[], author:"A member", date:"Mar 3", status:"", pinned:false },
+  { id:5, title:"Denver Art Museum visit", desc:"DAM has free first Saturdays! Could be a great low-key afternoon event.", votes:6, voters:[], author:"A member", date:"Mar 4", status:"done", pinned:false },
+];
+
+let suggestions = [];
+let currentFilter = 'all';
+let currentUser = null;
+
+function loadData() {
+  try { const s = localStorage.getItem('dsn_suggestions'); suggestions = s ? JSON.parse(s) : [...DEFAULT_SUGGESTIONS.map(s => ({...s, voters:[]}))] } catch(e) { suggestions = [...DEFAULT_SUGGESTIONS.map(s => ({...s, voters:[]}))] }
+  try { const u = localStorage.getItem('dsn_user'); if(u) currentUser = JSON.parse(u); } catch(e) {}
+}
+function saveData() { try { localStorage.setItem('dsn_suggestions', JSON.stringify(suggestions)); } catch(e) {} }
+
+function isAdmin() { return currentUser && currentUser.email === ADMIN_EMAIL; }
+
+function handleNavClick() {
+  if (currentUser) { showToast(`Logged in as ${currentUser.name} 👋`); }
+  else { window.location.href = '/?login=1'; }
+}
+
+function updateNav() {
+  const btn = document.getElementById('navLoginBtn');
+  const icon = document.getElementById('navLoginIcon');
+  const text = document.getElementById('navLoginText');
+  const note = document.getElementById('submitNote');
+  if (currentUser) {
+    btn.classList.add('logged-in');
+    text.textContent = currentUser.name ? currentUser.name.split(' ')[0] : 'Me';
+    note.textContent = `Posting as ${currentUser.name} · Sign in on home page to switch accounts.`;
+    document.getElementById('submitBtn').disabled = false;
+  } else {
+    btn.classList.remove('logged-in');
+    text.textContent = 'Sign In';
+    note.textContent = 'Sign in on the home page to post ideas and vote.';
+    document.getElementById('submitBtn').disabled = true;
+  }
+}
+
+function setFilter(f, el) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderSuggestions();
+}
+
+function getFiltered() {
+  let list = [...suggestions];
+  if (currentFilter === 'top') list.sort((a,b) => b.votes - a.votes);
+  else if (currentFilter === 'new') list.sort((a,b) => b.id - a.id);
+  else if (currentFilter === 'planned') list = list.filter(s => s.status === 'planned');
+  else if (currentFilter === 'done') list = list.filter(s => s.status === 'done');
+  else list.sort((a,b) => (b.pinned?1:0) - (a.pinned?1:0) || b.votes - a.votes);
+  return list;
+}
+
+function renderSuggestions() {
+  const list = getFiltered();
+  const el = document.getElementById('suggestionsList');
+  if (list.length === 0) {
+    el.innerHTML = `<div class="empty-state"><div class="emoji">💭</div><p>No suggestions here yet.<br>Be the first to post an idea!</p></div>`;
+    return;
+  }
+  el.innerHTML = list.map(s => {
+    const hasVoted = currentUser && s.voters.includes(currentUser.email);
+    const canDelete = isAdmin() || (currentUser && s.authorEmail === currentUser.email);
+    const statusBadge = s.status === 'planned' ? '<span class="suggestion-badge badge-planned">📋 Planned</span>'
+      : s.status === 'done' ? '<span class="suggestion-badge badge-done">✅ Done</span>'
+      : s.pinned ? '<span class="suggestion-badge badge-pinned">📌 Pinned</span>'
+      : s.id === Math.max(...suggestions.map(x=>x.id)) ? '<span class="suggestion-badge badge-new">✨ New</span>' : '';
+    const adminActions = isAdmin() ? `
+      <button class="action-btn" onclick="setStatus(${s.id},'planned')">📋 Plan</button>
+      <button class="action-btn" onclick="setStatus(${s.id},'done')">✅ Done</button>
+      <button class="action-btn" onclick="togglePin(${s.id})">📌 ${s.pinned?'Unpin':'Pin'}</button>
+    ` : '';
+    const deleteBtn = canDelete ? `<button class="action-btn del" onclick="deleteSuggestion(${s.id})">🗑️</button>` : '';
+    return `
+      <div class="suggestion-card${s.pinned?' pinned':''}">
+        <div class="vote-col">
+          <button class="vote-btn${hasVoted?' voted':''}" onclick="vote(${s.id})" title="${hasVoted?'Remove vote':'Upvote'}">▲</button>
+          <div class="vote-count">${s.votes}</div>
+          <div class="vote-label">votes</div>
+        </div>
+        <div class="suggestion-body">
+          <div class="suggestion-top">
+            <div class="suggestion-title">${s.title}</div>
+            ${statusBadge}
+          </div>
+          ${s.desc ? `<div class="suggestion-desc">${s.desc}</div>` : ''}
+          <div class="suggestion-footer">
+            <span class="suggestion-author">👤 ${s.author}</span>
+            <span class="suggestion-date">· ${s.date}</span>
+            <div class="suggestion-actions">${adminActions}${deleteBtn}</div>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function vote(id) {
+  if (!currentUser) { showToast('Sign in on the home page to vote!'); return; }
+  const s = suggestions.find(x => x.id === id);
+  if (!s) return;
+  s.voters = s.voters || [];
+  if (s.voters.includes(currentUser.email)) {
+    s.voters = s.voters.filter(e => e !== currentUser.email);
+    s.votes = Math.max(0, s.votes - 1);
+  } else {
+    s.voters.push(currentUser.email);
+    s.votes++;
+  }
+  saveData(); renderSuggestions();
+}
+
+function submitSuggestion() {
+  if (!currentUser) { showToast('Sign in on the home page to post!'); return; }
+  const val = document.getElementById('submitInput').value.trim();
+  if (!val) return;
+  const newId = Math.max(0, ...suggestions.map(s => s.id)) + 1;
+  const now = new Date();
+  suggestions.unshift({ id: newId, title: val, desc: '', votes: 1, voters: [currentUser.email], author: currentUser.name || 'A member', authorEmail: currentUser.email, date: now.toLocaleDateString('en-US',{month:'short',day:'numeric'}), status: '', pinned: false });
+  saveData(); document.getElementById('submitInput').value = ''; renderSuggestions();
+  showToast('Idea posted! 💡');
+}
+
+function deleteSuggestion(id) {
+  const s = suggestions.find(x => x.id === id);
+  if (!s) return;
+  const canDelete = isAdmin() || (currentUser && s.authorEmail === currentUser.email);
+  if (!canDelete) { showToast("You can't delete this."); return; }
+  if (!confirm(`Delete "${s.title}"?`)) return;
+  suggestions = suggestions.filter(x => x.id !== id);
+  saveData(); renderSuggestions(); showToast('Deleted.');
+}
+
+function setStatus(id, status) {
+  const s = suggestions.find(x => x.id === id);
+  if (s) { s.status = s.status === status ? '' : status; saveData(); renderSuggestions(); }
+}
+function togglePin(id) {
+  const s = suggestions.find(x => x.id === id);
+  if (s) { s.pinned = !s.pinned; saveData(); renderSuggestions(); }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+loadData(); updateNav(); renderSuggestions();
+</script>
+</body>
+</html>
