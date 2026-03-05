@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Denver Social Nights</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0f0f12; --surface: #18181c; --surface2: #222228; --border: #2e2e36;
+  --coral: #F05A28; --coral-dim: rgba(240,90,40,0.12); --text: #f0f0f0;
+  --muted: #888; --green: #22c55e; --red: #ef4444; --radius: 14px;
+}
+html { scroll-behavior: smooth; }
+body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+/* LOGIN */
+.login-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+.login-card { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 48px 40px; width: 100%; max-width: 400px; text-align: center; }
+.login-logo { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 900; margin-bottom: 8px; }
+.login-logo span { color: var(--coral); }
+.login-sub { color: var(--muted); font-size: 14px; margin-bottom: 36px; }
+.login-field { text-align: left; margin-bottom: 16px; }
+.login-field label { display: block; font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.login-field input { width: 100%; background: var(--bg); border: 1.5px solid var(--border); border-radius: 12px; padding: 13px 16px; color: var(--text); font-size: 14px; font-family: 'Outfit', sans-serif; outline: none; transition: border-color 0.2s; }
+.login-field input:focus { border-color: var(--coral); }
+.login-btn { width: 100%; background: var(--coral); color: #fff; border: none; border-radius: 50px; padding: 14px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: 'Outfit', sans-serif; margin-top: 8px; transition: opacity 0.2s; }
+.login-btn:hover { opacity: 0.88; }
+.login-error { color: var(--red); font-size: 13px; margin-top: 12px; display: none; }
+.login-error.show { display: block; }
+
+/* ADMIN LAYOUT */
+.admin-wrap { display: none; min-height: 100vh; }
+.admin-wrap.show { display: block; }
+.admin-nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 40px; height: 64px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
+.admin-nav-logo { font-family: 'Playfair Display', serif; font-weight: 900; font-size: 16px; }
+.admin-nav-logo span { color: var(--coral); }
+.admin-nav-right { display: flex; align-items: center; gap: 16px; }
+.admin-nav-link { color: var(--muted); text-decoration: none; font-size: 13px; transition: color 0.2s; }
+.admin-nav-link:hover { color: var(--text); }
+.logout-btn { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 7px 16px; border-radius: 50px; font-size: 13px; cursor: pointer; font-family: 'Outfit', sans-serif; transition: border-color 0.2s, color 0.2s; }
+.logout-btn:hover { border-color: var(--red); color: var(--red); }
+
+.admin-body { padding: 40px; max-width: 1200px; margin: 0 auto; }
+.admin-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 36px; }
+.admin-title { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 900; letter-spacing: -0.5px; }
+.add-btn { background: var(--coral); color: #fff; border: none; border-radius: 50px; padding: 12px 24px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Outfit', sans-serif; display: flex; align-items: center; gap: 8px; transition: opacity 0.2s; }
+.add-btn:hover { opacity: 0.88; }
+
+/* STATS BAR */
+.stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 36px; }
+.stat-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 24px; }
+.stat-box .num { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 900; color: var(--coral); }
+.stat-box .lbl { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+/* EVENTS TABLE */
+.events-table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; }
+.table-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.table-title { font-weight: 600; font-size: 16px; }
+.table-search { background: var(--bg); border: 1px solid var(--border); border-radius: 50px; padding: 8px 16px; color: var(--text); font-size: 13px; font-family: 'Outfit', sans-serif; outline: none; width: 220px; transition: border-color 0.2s; }
+.table-search:focus { border-color: var(--coral); }
+
+.events-list { display: flex; flex-direction: column; }
+.event-row { display: grid; grid-template-columns: 40px 1fr 120px 100px 80px 80px 120px; align-items: center; gap: 16px; padding: 16px 24px; border-bottom: 1px solid var(--border); transition: background 0.15s; }
+.event-row:last-child { border-bottom: none; }
+.event-row:hover { background: var(--surface2); }
+.event-row-header { background: var(--surface2); font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+.event-row-header:hover { background: var(--surface2); }
+.row-emoji { font-size: 22px; text-align: center; }
+.row-info {}
+.row-name { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+.row-location { font-size: 12px; color: var(--muted); }
+.row-date { font-size: 13px; color: var(--muted); }
+.row-time { font-size: 13px; color: var(--muted); }
+.row-spots { font-size: 13px; }
+.row-spots .available { color: var(--green); font-weight: 600; }
+.row-spots .full { color: var(--red); font-weight: 600; }
+.row-tag { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; padding: 4px 10px; border-radius: 50px; }
+.tag-dinner { background: rgba(240,90,40,0.15); color: var(--coral); }
+.tag-games { background: rgba(100,120,255,0.15); color: #7fa8ff; }
+.tag-bowling { background: rgba(200,70,160,0.15); color: #e080d0; }
+.tag-pottery { background: rgba(0,180,255,0.15); color: #60c8ff; }
+.row-actions { display: flex; gap: 8px; }
+.edit-btn, .del-btn { border: none; border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Outfit', sans-serif; transition: opacity 0.2s; }
+.edit-btn { background: rgba(240,90,40,0.15); color: var(--coral); }
+.edit-btn:hover { background: rgba(240,90,40,0.25); }
+.del-btn { background: rgba(239,68,68,0.12); color: var(--red); }
+.del-btn:hover { background: rgba(239,68,68,0.22); }
+
+/* MODAL */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 36px; width: 100%; max-width: 560px; transform: translateY(20px); transition: transform 0.25s; max-height: 90vh; overflow-y: auto; }
+.modal-overlay.open .modal { transform: translateY(0); }
+.modal-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+.modal-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; }
+.modal-close { background: var(--surface2); border: 1px solid var(--border); border-radius: 50%; width: 34px; height: 34px; color: var(--muted); cursor: pointer; font-size: 15px; display: flex; align-items: center; justify-content: center; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-field { display: flex; flex-direction: column; gap: 8px; }
+.form-field.full { grid-column: span 2; }
+.form-field label { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+.form-field input, .form-field select, .form-field textarea { background: var(--bg); border: 1.5px solid var(--border); border-radius: 10px; padding: 11px 14px; color: var(--text); font-size: 14px; font-family: 'Outfit', sans-serif; outline: none; transition: border-color 0.2s; }
+.form-field input:focus, .form-field select:focus, .form-field textarea:focus { border-color: var(--coral); }
+.form-field textarea { resize: vertical; min-height: 80px; }
+.form-field select option { background: var(--surface); }
+.modal-footer { display: flex; gap: 12px; margin-top: 24px; justify-content: flex-end; }
+.cancel-btn { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 11px 22px; border-radius: 50px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: 'Outfit', sans-serif; }
+.save-btn { background: var(--coral); color: #fff; border: none; border-radius: 50px; padding: 11px 28px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: 'Outfit', sans-serif; transition: opacity 0.2s; }
+.save-btn:hover { opacity: 0.88; }
+
+/* TOAST */
+.toast { position: fixed; bottom: 32px; right: 32px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 20px; font-size: 14px; font-weight: 500; z-index: 300; transform: translateY(20px); opacity: 0; transition: all 0.3s; pointer-events: none; display: flex; align-items: center; gap: 10px; }
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.success { border-color: rgba(34,197,94,0.3); }
+.toast.success::before { content: '✓'; color: var(--green); font-weight: 700; }
+.toast.error { border-color: rgba(239,68,68,0.3); }
+.toast.error::before { content: '✕'; color: var(--red); font-weight: 700; }
+
+/* CONFIRM DIALOG */
+.confirm-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 300; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+.confirm-overlay.open { opacity: 1; pointer-events: all; }
+.confirm-box { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 32px; max-width: 380px; width: 100%; text-align: center; }
+.confirm-box h3 { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; margin-bottom: 10px; }
+.confirm-box p { color: var(--muted); font-size: 14px; margin-bottom: 24px; line-height: 1.6; }
+.confirm-btns { display: flex; gap: 12px; justify-content: center; }
+.confirm-cancel { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 10px 24px; border-radius: 50px; font-size: 14px; cursor: pointer; font-family: 'Outfit', sans-serif; }
+.confirm-delete { background: var(--red); color: #fff; border: none; border-radius: 50px; padding: 10px 24px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Outfit', sans-serif; }
+
+@media (max-width: 768px) {
+  .admin-body { padding: 20px; }
+  .stats-bar { grid-template-columns: 1fr 1fr; }
+  .event-row { grid-template-columns: 1fr; gap: 8px; }
+  .event-row-header { display: none; }
+  .form-grid { grid-template-columns: 1fr; }
+  .form-field.full { grid-column: span 1; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-wrap" id="loginWrap">
+  <div class="login-card">
+    <div class="login-logo">Denver Social <span>Nights</span></div>
+    <div class="login-sub">Admin Panel — Enter your password to continue</div>
+    <div class="login-field">
+      <label>Password</label>
+      <input type="password" id="passwordInput" placeholder="Enter admin password" onkeydown="if(event.key==='Enter') doLogin()">
+    </div>
+    <button class="login-btn" onclick="doLogin()">Sign In →</button>
+    <div class="login-error" id="loginError">Incorrect password. Try again.</div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="admin-wrap" id="adminWrap">
+  <nav class="admin-nav">
+    <div class="admin-nav-logo">Denver Social <span>Nights</span> <span style="color:var(--muted);font-size:13px;font-weight:400;font-family:'Outfit',sans-serif">/ Admin</span></div>
+    <div class="admin-nav-right">
+      <a href="/" class="admin-nav-link" target="_blank">View Site →</a>
+      <button class="logout-btn" onclick="doLogout()">Log Out</button>
+    </div>
+  </nav>
+
+  <div class="admin-body">
+    <div class="admin-header">
+      <div class="admin-title">Events</div>
+      <button class="add-btn" onclick="openModal()">+ Add Event</button>
+    </div>
+
+    <div class="stats-bar" id="statsBar"></div>
+
+    <div class="events-table-wrap">
+      <div class="table-header">
+        <div class="table-title">All Events</div>
+        <input class="table-search" placeholder="Search events..." oninput="renderTable(this.value)">
+      </div>
+      <div class="events-list" id="eventsList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- EVENT MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-top">
+      <div class="modal-title" id="modalTitle">Add Event</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-field full">
+        <label>Event Title</label>
+        <input type="text" id="fTitle" placeholder="e.g. Group Dinner — RiNo">
+      </div>
+      <div class="form-field full">
+        <label>Description</label>
+        <textarea id="fDesc" placeholder="Short description of the event..."></textarea>
+      </div>
+      <div class="form-field">
+        <label>Category</label>
+        <select id="fTag">
+          <option value="Dinner">🍽️ Dinner</option>
+          <option value="Board Games">🎲 Board Games</option>
+          <option value="Bowling">🎳 Bowling</option>
+          <option value="Pottery">🏺 Pottery</option>
+          <option value="Other">✨ Other</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Emoji</label>
+        <input type="text" id="fEmoji" placeholder="🍜" maxlength="4">
+      </div>
+      <div class="form-field">
+        <label>Date</label>
+        <input type="text" id="fDate" placeholder="Sat, March 7">
+      </div>
+      <div class="form-field">
+        <label>Time</label>
+        <input type="text" id="fTime" placeholder="6:20 PM">
+      </div>
+      <div class="form-field full">
+        <label>Location</label>
+        <input type="text" id="fLocation" placeholder="3542 S Fox St, Englewood">
+      </div>
+      <div class="form-field">
+        <label>Spots Available</label>
+        <input type="number" id="fSpots" placeholder="4" min="0">
+      </div>
+      <div class="form-field">
+        <label>Total Capacity</label>
+        <input type="number" id="fTotal" placeholder="7" min="1">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+      <button class="save-btn" onclick="saveEvent()">Save Event</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM DELETE -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <h3>Delete Event?</h3>
+    <p id="confirmMsg">This will permanently remove this event from the site.</p>
+    <div class="confirm-btns">
+      <button class="confirm-cancel" onclick="closeConfirm()">Cancel</button>
+      <button class="confirm-delete" onclick="confirmDelete()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── CONFIG ───
+const ADMIN_PASSWORD = 'denver2026';
+
+// ─── DEFAULT EVENTS ───
+const DEFAULT_EVENTS = [
+  { id:1, emoji:"🍜", tag:"Dinner", tagClass:"tag-dinner", imgClass:"dinner", featured:true,
+    title:"Dinner at Bistro King Asian", desc:"Authentic Asian cuisine in Englewood — small group, great food, easy conversation.",
+    date:"Sat, March 7", time:"6:20 PM", location:"3542 S Fox St, Englewood", spots:4, total:7 },
+  { id:2, emoji:"🎲", tag:"Board Games", tagClass:"tag-games", imgClass:"games",
+    title:"Game Night at Meeples", desc:"Settlers of Catan, Ticket to Ride, Codenames and more. Beginners welcome.",
+    date:"Sat, March 8", time:"6:00 – 9:00 PM", location:"Meeples Games, Denver", spots:5, total:12 },
+  { id:3, emoji:"🎳", tag:"Bowling", tagClass:"tag-bowling", imgClass:"bowling",
+    title:"Cosmic Bowling Night", desc:"Glow lanes, chill music, zero competitive pressure.",
+    date:"Fri, March 14", time:"7:30 – 10:00 PM", location:"Bowlero Denver", spots:8, total:16 },
+  { id:4, emoji:"🍽️", tag:"Dinner", tagClass:"tag-dinner", imgClass:"dinner",
+    title:"Group Dinner — RiNo", desc:"Sit-down dinner in the RiNo Art District. Small table, good food.",
+    date:"Sat, March 22", time:"7:00 PM", location:"RiNo, Denver", spots:3, total:7 },
+  { id:5, emoji:"🏺", tag:"Pottery", tagClass:"tag-pottery", imgClass:"pottery",
+    title:"Pottery Painting Social", desc:"Pick a piece, paint it your way. Zero experience needed.",
+    date:"Sun, March 30", time:"2:00 – 5:00 PM", location:"Color Me Mine, Denver", spots:6, total:10 },
+  { id:6, emoji:"🎲", tag:"Board Games", tagClass:"tag-games", imgClass:"games",
+    title:"Strategy Game Night", desc:"Pandemic, Wingspan, Terraforming Mars.",
+    date:"Sat, April 5", time:"5:00 – 9:00 PM", location:"Meeples Games, Denver", spots:0, total:10 }
+];
+
+// ─── STATE ───
+let events = [];
+let editingId = null;
+let deleteId = null;
+
+// ─── TAG HELPERS ───
+const tagMap = {
+  'Dinner': { cls: 'tag-dinner', img: 'dinner', emoji: '🍽️' },
+  'Board Games': { cls: 'tag-games', img: 'games', emoji: '🎲' },
+  'Bowling': { cls: 'tag-bowling', img: 'bowling', emoji: '🎳' },
+  'Pottery': { cls: 'tag-pottery', img: 'pottery', emoji: '🏺' },
+  'Other': { cls: 'tag-games', img: 'games', emoji: '✨' }
+};
+
+// ─── STORAGE ───
+function saveEvents() {
+  try { localStorage.setItem('dsn_events', JSON.stringify(events)); } catch(e) {}
+}
+function loadEvents() {
+  try {
+    const stored = localStorage.getItem('dsn_events');
+    events = stored ? JSON.parse(stored) : [...DEFAULT_EVENTS];
+  } catch(e) { events = [...DEFAULT_EVENTS]; }
+}
+
+// ─── AUTH ───
+function doLogin() {
+  const pw = document.getElementById('passwordInput').value;
+  if (pw === ADMIN_PASSWORD) {
+    sessionStorage.setItem('dsn_admin', '1');
+    document.getElementById('loginWrap').style.display = 'none';
+    document.getElementById('adminWrap').classList.add('show');
+    loadEvents();
+    renderStats();
+    renderTable('');
+  } else {
+    document.getElementById('loginError').classList.add('show');
+    document.getElementById('passwordInput').value = '';
+    document.getElementById('passwordInput').focus();
+  }
+}
+function doLogout() {
+  sessionStorage.removeItem('dsn_admin');
+  document.getElementById('adminWrap').classList.remove('show');
+  document.getElementById('loginWrap').style.display = 'flex';
+  document.getElementById('passwordInput').value = '';
+}
+
+// Auto-login check
+if (sessionStorage.getItem('dsn_admin') === '1') {
+  document.getElementById('loginWrap').style.display = 'none';
+  document.getElementById('adminWrap').classList.add('show');
+  loadEvents();
+  renderStats();
+  renderTable('');
+}
+
+// ─── STATS ───
+function renderStats() {
+  const total = events.length;
+  const upcoming = events.filter(e => e.spots > 0).length;
+  const soldOut = events.filter(e => e.spots === 0).length;
+  const totalSpots = events.reduce((a, e) => a + (e.total - e.spots), 0);
+  document.getElementById('statsBar').innerHTML = `
+    <div class="stat-box"><div class="num">${total}</div><div class="lbl">Total Events</div></div>
+    <div class="stat-box"><div class="num">${upcoming}</div><div class="lbl">Spots Available</div></div>
+    <div class="stat-box"><div class="num">${soldOut}</div><div class="lbl">Sold Out</div></div>
+    <div class="stat-box"><div class="num">${totalSpots}</div><div class="lbl">RSVPs Received</div></div>
+  `;
+}
+
+// ─── TABLE ───
+function renderTable(search = '') {
+  const filtered = events.filter(e =>
+    e.title.toLowerCase().includes(search.toLowerCase()) ||
+    e.location.toLowerCase().includes(search.toLowerCase()) ||
+    e.tag.toLowerCase().includes(search.toLowerCase())
+  );
+  const list = document.getElementById('eventsList');
+  if (filtered.length === 0) {
+    list.innerHTML = `<div style="padding:40px;text-align:center;color:var(--muted)">No events found.</div>`;
+    return;
+  }
+  list.innerHTML = `
+    <div class="event-row event-row-header">
+      <div></div><div>Event</div><div>Date</div><div>Time</div><div>Spots</div><div>Type</div><div>Actions</div>
+    </div>
+    ${filtered.map(e => `
+      <div class="event-row">
+        <div class="row-emoji">${e.emoji}</div>
+        <div class="row-info">
+          <div class="row-name">${e.title}</div>
+          <div class="row-location">📍 ${e.location}</div>
+        </div>
+        <div class="row-date">${e.date}</div>
+        <div class="row-time">${e.time}</div>
+        <div class="row-spots">${e.spots === 0 ? '<span class="full">Full</span>' : `<span class="available">${e.spots}</span>/${e.total}`}</div>
+        <div><span class="row-tag ${tagMap[e.tag]?.cls || 'tag-games'}">${e.tag}</span></div>
+        <div class="row-actions">
+          <button class="edit-btn" onclick="openModal(${e.id})">Edit</button>
+          <button class="del-btn" onclick="openConfirm(${e.id})">Delete</button>
+        </div>
+      </div>
+    `).join('')}
+  `;
+}
+
+// ─── MODAL ───
+function openModal(id = null) {
+  editingId = id;
+  document.getElementById('modalTitle').textContent = id ? 'Edit Event' : 'Add Event';
+  if (id) {
+    const e = events.find(ev => ev.id === id);
+    if (e) {
+      document.getElementById('fTitle').value = e.title;
+      document.getElementById('fDesc').value = e.desc;
+      document.getElementById('fTag').value = e.tag;
+      document.getElementById('fEmoji').value = e.emoji;
+      document.getElementById('fDate').value = e.date;
+      document.getElementById('fTime').value = e.time;
+      document.getElementById('fLocation').value = e.location;
+      document.getElementById('fSpots').value = e.spots;
+      document.getElementById('fTotal').value = e.total;
+    }
+  } else {
+    document.getElementById('fTitle').value = '';
+    document.getElementById('fDesc').value = '';
+    document.getElementById('fTag').value = 'Dinner';
+    document.getElementById('fEmoji').value = '';
+    document.getElementById('fDate').value = '';
+    document.getElementById('fTime').value = '';
+    document.getElementById('fLocation').value = '';
+    document.getElementById('fSpots').value = '';
+    document.getElementById('fTotal').value = '';
+  }
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+
+// ─── SAVE ───
+function saveEvent() {
+  const title = document.getElementById('fTitle').value.trim();
+  const desc = document.getElementById('fDesc').value.trim();
+  const tag = document.getElementById('fTag').value;
+  const emoji = document.getElementById('fEmoji').value.trim() || tagMap[tag]?.emoji || '✨';
+  const date = document.getElementById('fDate').value.trim();
+  const time = document.getElementById('fTime').value.trim();
+  const location = document.getElementById('fLocation').value.trim();
+  const spots = parseInt(document.getElementById('fSpots').value);
+  const total = parseInt(document.getElementById('fTotal').value);
+
+  if (!title || !date || !location || isNaN(spots) || isNaN(total)) {
+    showToast('Please fill in all required fields.', 'error'); return;
+  }
+
+  const info = tagMap[tag] || tagMap['Other'];
+  const eventData = { emoji, tag, tagClass: info.cls, imgClass: info.img, title, desc, date, time, location, spots, total };
+
+  if (editingId) {
+    const idx = events.findIndex(e => e.id === editingId);
+    if (idx !== -1) events[idx] = { ...events[idx], ...eventData };
+    showToast('Event updated!', 'success');
+  } else {
+    const newId = Math.max(0, ...events.map(e => e.id)) + 1;
+    events.push({ id: newId, featured: false, ...eventData });
+    showToast('Event added!', 'success');
+  }
+
+  saveEvents();
+  renderStats();
+  renderTable('');
+  closeModal();
+}
+
+// ─── DELETE ───
+function openConfirm(id) {
+  deleteId = id;
+  const e = events.find(ev => ev.id === id);
+  document.getElementById('confirmMsg').textContent = `This will remove "${e?.title}" from the site.`;
+  document.getElementById('confirmOverlay').classList.add('open');
+}
+function closeConfirm() { document.getElementById('confirmOverlay').classList.remove('open'); deleteId = null; }
+function confirmDelete() {
+  events = events.filter(e => e.id !== deleteId);
+  saveEvents(); renderStats(); renderTable('');
+  closeConfirm();
+  showToast('Event deleted.', 'success');
+}
+
+// ─── TOAST ───
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = `toast ${type} show`;
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeConfirm(); } });
+</script>
+</body>
+</html>

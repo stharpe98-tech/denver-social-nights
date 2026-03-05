@@ -269,6 +269,15 @@ const events = [
     date:"Sat, April 5", time:"5:00 – 9:00 PM", location:"Meeples Games, Denver", spots:0, total:10 }
 ];
 
+const DEFAULT_EVENTS = [
+  { id:1, emoji:"🍜", tag:"Dinner", tagClass:"tag-dinner", imgClass:"dinner", featured:true, title:"Dinner at Bistro King Asian", desc:"Authentic Asian cuisine in Englewood — small group, great food, easy conversation. 4.2 stars and consistently packed for a reason.", date:"Sat, March 7", time:"6:20 PM", location:"3542 S Fox St, Englewood", spots:4, total:7 },
+  { id:2, emoji:"🎲", tag:"Board Games", tagClass:"tag-games", imgClass:"games", title:"Game Night at Meeples", desc:"Settlers of Catan, Ticket to Ride, Codenames and more. Beginners absolutely welcome — we'll teach you everything.", date:"Sat, March 8", time:"6:00 – 9:00 PM", location:"Meeples Games, Denver", spots:5, total:12 },
+  { id:3, emoji:"🎳", tag:"Bowling", tagClass:"tag-bowling", imgClass:"bowling", title:"Cosmic Bowling Night", desc:"Glow lanes, chill music, and zero competitive pressure. Pure vibes — skill level absolutely doesn't matter.", date:"Fri, March 14", time:"7:30 – 10:00 PM", location:"Bowlero Denver", spots:8, total:16 },
+  { id:4, emoji:"🍽️", tag:"Dinner", tagClass:"tag-dinner", imgClass:"dinner", title:"Group Dinner — RiNo", desc:"Sit-down dinner in the RiNo Art District. Small table, good food, real conversation. Location TBA.", date:"Sat, March 22", time:"7:00 PM", location:"RiNo, Denver", spots:3, total:7 },
+  { id:5, emoji:"🏺", tag:"Pottery", tagClass:"tag-pottery", imgClass:"pottery", title:"Pottery Painting Social", desc:"Pick a piece, paint it your way, and hang out with cool people. Zero experience needed.", date:"Sun, March 30", time:"2:00 – 5:00 PM", location:"Color Me Mine, Denver", spots:6, total:10 },
+  { id:6, emoji:"🎲", tag:"Board Games", tagClass:"tag-games", imgClass:"games", title:"Strategy Game Night", desc:"Pandemic, Wingspan, Terraforming Mars. This month's theme: let's save (or terraform) the world.", date:"Sat, April 5", time:"5:00 – 9:00 PM", location:"Meeples Games, Denver", spots:0, total:10 }
+];
+try { const s = localStorage.getItem('dsn_events'); if (s) events = JSON.parse(s); } catch(e) {}
 let currentEvent = null;
 
 function renderHeroCards() {
