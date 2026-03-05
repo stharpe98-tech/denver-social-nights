@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Denver Social Nights</title>
+<title>Denver Social Nights — Real Hangouts in Denver, CO</title>
+<meta name="description" content="Join real dinners, game nights, bowling, and more in Denver. Small groups, no apps, just good people.">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -14,21 +15,36 @@
 html { scroll-behavior: smooth; }
 body { font-family: 'Outfit', sans-serif; background: var(--white); color: var(--ink); overflow-x: hidden; }
 
+/* NAV */
 nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
   padding: 0 48px; height: 68px;
   display: flex; align-items: center; justify-content: space-between;
-  background: rgba(250,250,248,0.92); backdrop-filter: blur(12px);
+  background: rgba(240,246,252,0.92); backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--stone);
 }
 .nav-logo { font-family: 'Playfair Display', serif; font-weight: 900; font-size: 17px; letter-spacing: -0.3px; }
 .nav-logo span { color: var(--coral); }
-.nav-links { display: flex; gap: 32px; list-style: none; align-items: center; }
+.nav-links { display: flex; gap: 24px; list-style: none; align-items: center; }
 .nav-links a { color: var(--muted); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; }
 .nav-links a:hover { color: var(--ink); }
-.nav-cta { background: var(--ink) !important; color: var(--white) !important; padding: 9px 22px; border-radius: 50px; font-weight: 600 !important; font-size: 13px !important; transition: background 0.2s !important; }
+.nav-login-btn {
+  background: transparent; border: 1.5px solid var(--stone); color: var(--ink);
+  padding: 8px 18px; border-radius: 50px; font-size: 13px; font-weight: 600;
+  cursor: pointer; font-family: 'Outfit', sans-serif; transition: border-color 0.2s, background 0.2s;
+  display: flex; align-items: center; gap: 7px;
+}
+.nav-login-btn:hover { border-color: var(--coral); color: var(--coral); }
+.nav-login-btn.logged-in { background: var(--coral); color: #fff; border-color: var(--coral); }
+.nav-login-btn.logged-in:hover { opacity: 0.88; color: #fff; }
+.nav-cta {
+  background: var(--ink) !important; color: var(--white) !important;
+  padding: 9px 22px; border-radius: 50px; font-weight: 600 !important;
+  font-size: 13px !important; transition: background 0.2s !important;
+}
 .nav-cta:hover { background: var(--coral) !important; }
 
+/* HERO */
 .hero { min-height: 100vh; padding: 68px 0 0; display: grid; grid-template-columns: 1fr 1fr; position: relative; overflow: hidden; }
 .hero-left { padding: 80px 48px 80px 72px; display: flex; flex-direction: column; justify-content: center; position: relative; z-index: 2; }
 .hero-tag { display: inline-flex; align-items: center; gap: 8px; background: var(--coral-soft); color: var(--coral); font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; padding: 7px 14px; border-radius: 50px; margin-bottom: 28px; width: fit-content; }
@@ -44,7 +60,6 @@ nav {
 .btn-outline:hover { border-color: var(--ink); }
 .hero-pills { display: flex; gap: 8px; flex-wrap: wrap; }
 .pill { padding: 8px 16px; border-radius: 50px; font-size: 13px; font-weight: 500; background: var(--sand); color: var(--muted); border: 1px solid var(--stone); }
-
 .hero-right { position: relative; background: var(--sand); display: flex; align-items: center; justify-content: center; overflow: hidden; }
 .hero-graphic { position: absolute; inset: 0; background: radial-gradient(circle at 70% 30%, rgba(240,90,40,0.15) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(240,90,40,0.08) 0%, transparent 50%); }
 .hero-cards { position: relative; z-index: 2; padding: 40px; display: flex; flex-direction: column; gap: 16px; width: 100%; max-width: 380px; }
@@ -58,18 +73,19 @@ nav {
 .hc-meta { font-size: 12px; color: var(--muted); }
 .hc-badge { margin-left: auto; background: var(--coral-soft); color: var(--coral); font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 50px; flex-shrink: 0; }
 
+/* MARQUEE */
 .marquee-wrap { background: var(--ink); overflow: hidden; padding: 16px 0; }
 .marquee-track { display: flex; white-space: nowrap; animation: marquee 30s linear infinite; }
 @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 .marquee-item { display: inline-flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 500; color: #6a6460; padding: 0 32px; }
 .marquee-item span { color: var(--coral); }
 
+/* EVENTS */
 .events-section { padding: 100px 72px; max-width: 1300px; margin: 0 auto; }
 .section-eyebrow { font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--coral); font-weight: 600; margin-bottom: 16px; }
 .section-title { font-family: 'Playfair Display', serif; font-size: clamp(36px, 4vw, 52px); font-weight: 900; letter-spacing: -1px; margin-bottom: 48px; line-height: 1.1; }
 .section-title em { font-style: italic; }
 .events-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-
 .event-card { background: var(--white); border: 1.5px solid var(--stone); border-radius: 20px; overflow: hidden; transition: transform 0.25s, box-shadow 0.25s, border-color 0.2s; cursor: pointer; }
 .event-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.1); border-color: var(--coral); }
 .event-card.featured { border-color: var(--coral); background: linear-gradient(160deg, #FFF7F4, var(--white)); }
@@ -96,7 +112,8 @@ nav {
 .rsvp-btn.confirmed { background: #22C55E; }
 .rsvp-btn.full { background: var(--stone); color: var(--muted); cursor: default; }
 
-.about-section { background: var(--ink); color: var(--white); padding: 100px 72px; position: relative; overflow: hidden; }
+/* ABOUT */
+.about-section { background: var(--ink); color: #fff; padding: 100px 72px; position: relative; overflow: hidden; }
 .about-glow { position: absolute; width: 600px; height: 600px; border-radius: 50%; background: radial-gradient(circle, rgba(240,90,40,0.15) 0%, transparent 70%); top: -200px; right: -100px; pointer-events: none; }
 .about-inner { max-width: 1300px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; position: relative; z-index: 2; }
 .about-label { font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--coral); font-weight: 600; margin-bottom: 16px; }
@@ -112,6 +129,65 @@ nav {
 .stat-card .lbl { font-size: 13px; color: #6A6460; line-height: 1.4; }
 .stat-card.wide { grid-column: span 2; background: rgba(240,90,40,0.08); border-color: rgba(240,90,40,0.2); }
 
+/* AUTH MODAL */
+.auth-overlay { position: fixed; inset: 0; background: rgba(20,18,16,0.65); backdrop-filter: blur(6px); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
+.auth-overlay.open { opacity: 1; pointer-events: all; }
+.auth-modal { background: var(--white); border-radius: 28px; padding: 44px 40px; width: 100%; max-width: 440px; position: relative; transform: translateY(24px) scale(0.97); transition: transform 0.28s; box-shadow: 0 24px 80px rgba(0,0,0,0.15); }
+.auth-overlay.open .auth-modal { transform: translateY(0) scale(1); }
+.auth-close { position: absolute; top: 18px; right: 18px; background: var(--sand); border: none; border-radius: 50%; width: 34px; height: 34px; color: var(--muted); cursor: pointer; font-size: 15px; display: flex; align-items: center; justify-content: center; }
+.auth-logo { font-family: 'Playfair Display', serif; font-weight: 900; font-size: 18px; margin-bottom: 6px; }
+.auth-logo span { color: var(--coral); }
+.auth-sub { color: var(--muted); font-size: 14px; margin-bottom: 32px; line-height: 1.5; }
+.auth-step { display: none; }
+.auth-step.active { display: block; }
+.auth-field { margin-bottom: 16px; }
+.auth-field label { display: block; font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.auth-field input { width: 100%; background: var(--sand); border: 1.5px solid var(--stone); border-radius: 12px; padding: 13px 16px; color: var(--ink); font-size: 15px; font-family: 'Outfit', sans-serif; outline: none; transition: border-color 0.2s; }
+.auth-field input:focus { border-color: var(--coral); background: #fff; }
+.auth-btn { width: 100%; background: var(--coral); color: #fff; border: none; border-radius: 50px; padding: 14px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: 'Outfit', sans-serif; margin-top: 8px; transition: opacity 0.2s; }
+.auth-btn:hover { opacity: 0.88; }
+.auth-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.auth-note { font-size: 12px; color: var(--muted); text-align: center; margin-top: 14px; line-height: 1.5; }
+.auth-note a { color: var(--coral); cursor: pointer; text-decoration: underline; }
+.otp-inputs { display: flex; gap: 10px; justify-content: center; margin: 24px 0; }
+.otp-inputs input { width: 52px; height: 60px; text-align: center; font-size: 24px; font-weight: 700; background: var(--sand); border: 1.5px solid var(--stone); border-radius: 12px; color: var(--ink); font-family: 'Outfit', sans-serif; outline: none; transition: border-color 0.2s; }
+.otp-inputs input:focus { border-color: var(--coral); background: #fff; }
+.auth-error { color: #e53e3e; font-size: 13px; margin-top: 10px; display: none; text-align: center; }
+.auth-error.show { display: block; }
+
+/* PROFILE PANEL */
+.profile-overlay { position: fixed; inset: 0; background: rgba(20,18,16,0.65); backdrop-filter: blur(6px); z-index: 200; display: flex; align-items: flex-start; justify-content: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
+.profile-overlay.open { opacity: 1; pointer-events: all; }
+.profile-panel { background: var(--white); width: 100%; max-width: 420px; min-height: 100vh; padding: 36px 32px; transform: translateX(100%); transition: transform 0.3s; overflow-y: auto; }
+.profile-overlay.open .profile-panel { transform: translateX(0); }
+.profile-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 36px; }
+.profile-close { background: var(--sand); border: none; border-radius: 50%; width: 36px; height: 36px; color: var(--muted); cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; }
+.profile-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; }
+.profile-avatar { width: 72px; height: 72px; background: var(--coral-soft); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 12px; }
+.profile-name { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+.profile-email { font-size: 13px; color: var(--muted); margin-bottom: 28px; }
+.profile-section { margin-bottom: 28px; }
+.profile-section-title { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+.profile-field { margin-bottom: 14px; }
+.profile-field label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
+.profile-field input, .profile-field textarea { width: 100%; background: var(--sand); border: 1.5px solid var(--stone); border-radius: 10px; padding: 11px 14px; color: var(--ink); font-size: 14px; font-family: 'Outfit', sans-serif; outline: none; transition: border-color 0.2s; }
+.profile-field input:focus, .profile-field textarea:focus { border-color: var(--coral); }
+.profile-field textarea { resize: vertical; min-height: 80px; }
+.pref-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.pref-chip { border: 1.5px solid var(--stone); border-radius: 50px; padding: 8px 14px; font-size: 13px; font-weight: 500; cursor: pointer; text-align: center; transition: all 0.2s; background: var(--white); color: var(--muted); }
+.pref-chip.selected { background: var(--coral-soft); border-color: var(--coral); color: var(--coral); font-weight: 600; }
+.save-profile-btn { width: 100%; background: var(--coral); color: #fff; border: none; border-radius: 50px; padding: 13px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: 'Outfit', sans-serif; transition: opacity 0.2s; margin-top: 8px; }
+.save-profile-btn:hover { opacity: 0.88; }
+.logout-link { width: 100%; background: transparent; border: 1.5px solid var(--stone); color: var(--muted); border-radius: 50px; padding: 11px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: 'Outfit', sans-serif; margin-top: 12px; transition: border-color 0.2s, color 0.2s; }
+.logout-link:hover { border-color: #e53e3e; color: #e53e3e; }
+.rsvp-history { display: flex; flex-direction: column; gap: 10px; }
+.rsvp-item { background: var(--sand); border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
+.rsvp-item-emoji { font-size: 22px; }
+.rsvp-item-name { font-weight: 600; font-size: 14px; }
+.rsvp-item-date { font-size: 12px; color: var(--muted); }
+.empty-rsvps { color: var(--muted); font-size: 14px; line-height: 1.6; }
+
+/* RSVP MODAL */
 .modal-overlay { position: fixed; inset: 0; background: rgba(20,18,16,0.6); backdrop-filter: blur(6px); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
 .modal-overlay.open { opacity: 1; pointer-events: all; }
 .modal { background: var(--white); border-radius: 24px; padding: 40px; width: 100%; max-width: 460px; position: relative; transform: translateY(24px) scale(0.97); transition: transform 0.28s; box-shadow: 0 24px 80px rgba(0,0,0,0.2); }
@@ -123,7 +199,7 @@ nav {
 .modal-field { margin-bottom: 16px; }
 .modal-field label { display: block; font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
 .modal-field input, .modal-field select { width: 100%; background: var(--sand); border: 1.5px solid var(--stone); border-radius: 12px; padding: 13px 16px; color: var(--ink); font-size: 14px; font-family: 'Outfit', sans-serif; outline: none; transition: border-color 0.2s; }
-.modal-field input:focus, .modal-field select:focus { border-color: var(--coral); background: var(--white); }
+.modal-field input:focus, .modal-field select:focus { border-color: var(--coral); background: #fff; }
 .modal-submit { width: 100%; background: var(--coral); color: #fff; border: none; border-radius: 50px; padding: 15px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 8px; font-family: 'Outfit', sans-serif; transition: opacity 0.2s; }
 .modal-submit:hover { opacity: 0.88; }
 .modal-success { display: none; text-align: center; padding: 20px 0; }
@@ -133,6 +209,7 @@ nav {
 .modal-success h3 { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; margin-bottom: 10px; }
 .modal-success p { color: var(--muted); font-size: 14px; line-height: 1.7; }
 
+/* FOOTER */
 footer { background: var(--sand); border-top: 1px solid var(--stone); padding: 48px 72px; display: flex; align-items: center; justify-content: space-between; }
 .footer-logo { font-family: 'Playfair Display', serif; font-weight: 900; font-size: 20px; }
 .footer-logo span { color: var(--coral); }
@@ -141,26 +218,36 @@ footer { background: var(--sand); border-top: 1px solid var(--stone); padding: 4
 .footer-links a:hover { color: var(--ink); }
 .footer-copy { font-size: 12px; color: var(--muted); }
 
+/* TOAST */
+.toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--ink); color: #fff; border-radius: 50px; padding: 12px 24px; font-size: 14px; font-weight: 500; z-index: 999; opacity: 0; transition: all 0.3s; pointer-events: none; white-space: nowrap; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
 @media (max-width: 900px) {
   nav { padding: 0 24px; } .nav-links { display: none; }
   .hero { grid-template-columns: 1fr; } .hero-left { padding: 48px 24px; } .hero-right { display: none; }
   .events-section { padding: 60px 24px; } .events-grid { grid-template-columns: 1fr; }
   .about-section { padding: 60px 24px; } .about-inner { grid-template-columns: 1fr; gap: 40px; }
   footer { flex-direction: column; gap: 20px; text-align: center; padding: 40px 24px; } .footer-links { flex-wrap: wrap; justify-content: center; }
+  .profile-panel { max-width: 100%; }
 }
 </style>
 </head>
 <body>
 
+<!-- NAV -->
 <nav>
   <div class="nav-logo">Denver Social <span>Nights</span></div>
   <ul class="nav-links">
     <li><a href="#events">Events</a></li>
     <li><a href="#about">About</a></li>
-    <li><a href="#" class="nav-cta" onclick="openRSVP(events[0]); return false;">Join an Event</a></li>
   </ul>
+  <button class="nav-login-btn" id="navLoginBtn" onclick="handleNavLoginClick()">
+    <span id="navLoginIcon">👤</span>
+    <span id="navLoginText">Sign In</span>
+  </button>
 </nav>
 
+<!-- HERO -->
 <div class="hero">
   <div class="hero-left">
     <div class="hero-tag">Now in Denver, CO</div>
@@ -184,16 +271,19 @@ footer { background: var(--sand); border-top: 1px solid var(--stone); padding: 4
   </div>
 </div>
 
+<!-- MARQUEE -->
 <div class="marquee-wrap">
   <div class="marquee-track" id="marqueeTrack"></div>
 </div>
 
+<!-- EVENTS -->
 <div class="events-section" id="events">
   <div class="section-eyebrow">Upcoming Events</div>
   <h2 class="section-title">Pick your next<br><em>adventure.</em></h2>
   <div class="events-grid" id="eventsGrid"></div>
 </div>
 
+<!-- ABOUT -->
 <div class="about-section" id="about">
   <div class="about-glow"></div>
   <div class="about-inner">
@@ -217,9 +307,108 @@ footer { background: var(--sand); border-top: 1px solid var(--stone); padding: 4
   </div>
 </div>
 
-<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Denver Social <span>Nights</span></div>
+  <div class="footer-links">
+    <a href="#events">Events</a>
+    <a href="#about">About</a>
+    <a href="mailto:hello@denversocialnights.com">Contact</a>
+  </div>
+  <div class="footer-copy">© 2026 Denver Social Nights · Made with ❤️ in Denver</div>
+</footer>
+
+<!-- AUTH MODAL -->
+<div class="auth-overlay" id="authOverlay" onclick="closeAuthIfOutside(event)">
+  <div class="auth-modal">
+    <button class="auth-close" onclick="closeAuth()">✕</button>
+
+    <!-- Step 1: Email -->
+    <div class="auth-step active" id="authStep1">
+      <div class="auth-logo">Denver Social <span>Nights</span></div>
+      <div class="auth-sub">Enter your email and we'll send you a one-time code — no password needed.</div>
+      <div class="auth-field">
+        <label>Email Address</label>
+        <input type="email" id="authEmail" placeholder="you@example.com" onkeydown="if(event.key==='Enter') sendOTP()">
+      </div>
+      <button class="auth-btn" id="sendOtpBtn" onclick="sendOTP()">Send My Code →</button>
+      <div class="auth-error" id="authError1"></div>
+      <div class="auth-note">We'll create your account automatically if you're new.</div>
+    </div>
+
+    <!-- Step 2: OTP -->
+    <div class="auth-step" id="authStep2">
+      <div class="auth-logo">Denver Social <span>Nights</span></div>
+      <div class="auth-sub" id="otpSubText">Check your inbox — we sent a 6-digit code.</div>
+      <div class="otp-inputs" id="otpInputs">
+        <input type="text" maxlength="1" oninput="otpInput(this,0)" onkeydown="otpBack(event,0)">
+        <input type="text" maxlength="1" oninput="otpInput(this,1)" onkeydown="otpBack(event,1)">
+        <input type="text" maxlength="1" oninput="otpInput(this,2)" onkeydown="otpBack(event,2)">
+        <input type="text" maxlength="1" oninput="otpInput(this,3)" onkeydown="otpBack(event,3)">
+        <input type="text" maxlength="1" oninput="otpInput(this,4)" onkeydown="otpBack(event,4)">
+        <input type="text" maxlength="1" oninput="otpInput(this,5)" onkeydown="otpBack(event,5)">
+      </div>
+      <button class="auth-btn" onclick="verifyOTP()">Verify Code →</button>
+      <div class="auth-error" id="authError2"></div>
+      <div class="auth-note">Didn't get it? <a onclick="resendOTP()">Resend code</a> · <a onclick="goBackToEmail()">Change email</a></div>
+    </div>
+
+    <!-- Step 3: New user setup -->
+    <div class="auth-step" id="authStep3">
+      <div class="auth-logo">Denver Social <span>Nights</span></div>
+      <div class="auth-sub">Welcome! Tell us a little about yourself.</div>
+      <div class="auth-field">
+        <label>Your Name</label>
+        <input type="text" id="authName" placeholder="First name is fine!">
+      </div>
+      <button class="auth-btn" onclick="completeSignup()">Let's Go 🎉</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE PANEL -->
+<div class="profile-overlay" id="profileOverlay" onclick="closeProfileIfOutside(event)">
+  <div class="profile-panel" id="profilePanel">
+    <div class="profile-header">
+      <div class="profile-title">My Profile</div>
+      <button class="profile-close" onclick="closeProfile()">✕</button>
+    </div>
+    <div class="profile-avatar" id="profileAvatar">👤</div>
+    <div class="profile-name" id="profileNameDisplay"></div>
+    <div class="profile-email" id="profileEmailDisplay"></div>
+
+    <div class="profile-section">
+      <div class="profile-section-title">Edit Profile</div>
+      <div class="profile-field"><label>Name</label><input type="text" id="profileName" placeholder="Your name"></div>
+      <div class="profile-field"><label>Bio</label><textarea id="profileBio" placeholder="Tell the community a little about yourself..."></textarea></div>
+    </div>
+
+    <div class="profile-section">
+      <div class="profile-section-title">Event Preferences</div>
+      <div class="pref-grid" id="prefGrid">
+        <div class="pref-chip" onclick="togglePref(this)" data-pref="Dinners">🍽️ Dinners</div>
+        <div class="pref-chip" onclick="togglePref(this)" data-pref="Game Nights">🎲 Game Nights</div>
+        <div class="pref-chip" onclick="togglePref(this)" data-pref="Bowling">🎳 Bowling</div>
+        <div class="pref-chip" onclick="togglePref(this)" data-pref="Pottery">🏺 Pottery</div>
+        <div class="pref-chip" onclick="togglePref(this)" data-pref="Outdoor">🏔️ Outdoor</div>
+        <div class="pref-chip" onclick="togglePref(this)" data-pref="Arts">🎨 Arts</div>
+      </div>
+    </div>
+
+    <div class="profile-section">
+      <div class="profile-section-title">My RSVPs</div>
+      <div class="rsvp-history" id="rsvpHistory"></div>
+    </div>
+
+    <button class="save-profile-btn" onclick="saveProfile()">Save Profile</button>
+    <button class="logout-link" onclick="doLogout()">Log Out</button>
+  </div>
+</div>
+
+<!-- RSVP MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeRSVPIfOutside(event)">
   <div class="modal">
-    <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    <button class="modal-close" onclick="closeRSVPModal()">✕</button>
     <div class="modal-form" id="modalForm">
       <div class="modal-emoji" id="modalEmoji"></div>
       <div class="modal-title" id="modalTitle"></div>
@@ -237,49 +426,225 @@ footer { background: var(--sand); border-top: 1px solid var(--stone); padding: 4
   </div>
 </div>
 
-<footer>
-  <div class="footer-logo">Denver Social <span>Nights</span></div>
-  <div class="footer-links">
-    <a href="#events">Events</a>
-    <a href="#about">About</a>
-    <a href="mailto:hello@denversocialnights.com">Contact</a>
-  </div>
-  <div class="footer-copy">© 2026 Denver Social Nights · Made with ❤️ in Denver</div>
-</footer>
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
 
 <script>
-const events = [
-  { id:1, emoji:"🍜", tag:"Dinner", tagClass:"tag-dinner", imgClass:"dinner", featured:true,
-    title:"Dinner at Bistro King Asian", desc:"Authentic Asian cuisine in Englewood — small group, great food, easy conversation. 4.2 stars and consistently packed for a reason.",
-    date:"Sat, March 7", time:"6:20 PM", location:"3542 S Fox St, Englewood", spots:4, total:7 },
-  { id:2, emoji:"🎲", tag:"Board Games", tagClass:"tag-games", imgClass:"games",
-    title:"Game Night at Meeples", desc:"Settlers of Catan, Ticket to Ride, Codenames and more. Beginners absolutely welcome — we'll teach you everything.",
-    date:"Sat, March 8", time:"6:00 – 9:00 PM", location:"Meeples Games, Denver", spots:5, total:12 },
-  { id:3, emoji:"🎳", tag:"Bowling", tagClass:"tag-bowling", imgClass:"bowling",
-    title:"Cosmic Bowling Night", desc:"Glow lanes, chill music, and zero competitive pressure. Pure vibes — skill level absolutely doesn't matter.",
-    date:"Fri, March 14", time:"7:30 – 10:00 PM", location:"Bowlero Denver", spots:8, total:16 },
-  { id:4, emoji:"🍽️", tag:"Dinner", tagClass:"tag-dinner", imgClass:"dinner",
-    title:"Group Dinner — RiNo", desc:"Sit-down dinner in the RiNo Art District. Small table, good food, real conversation. Location TBA.",
-    date:"Sat, March 22", time:"7:00 PM", location:"RiNo, Denver", spots:3, total:7 },
-  { id:5, emoji:"🏺", tag:"Pottery", tagClass:"tag-pottery", imgClass:"pottery",
-    title:"Pottery Painting Social", desc:"Pick a piece, paint it your way, and hang out with cool people. Zero experience needed.",
-    date:"Sun, March 30", time:"2:00 – 5:00 PM", location:"Color Me Mine, Denver", spots:6, total:10 },
-  { id:6, emoji:"🎲", tag:"Board Games", tagClass:"tag-games", imgClass:"games",
-    title:"Strategy Game Night", desc:"Pandemic, Wingspan, Terraforming Mars. This month's theme: let's save (or terraform) the world.",
-    date:"Sat, April 5", time:"5:00 – 9:00 PM", location:"Meeples Games, Denver", spots:0, total:10 }
-];
-
+// ─── EVENTS ───
 const DEFAULT_EVENTS = [
   { id:1, emoji:"🍜", tag:"Dinner", tagClass:"tag-dinner", imgClass:"dinner", featured:true, title:"Dinner at Bistro King Asian", desc:"Authentic Asian cuisine in Englewood — small group, great food, easy conversation. 4.2 stars and consistently packed for a reason.", date:"Sat, March 7", time:"6:20 PM", location:"3542 S Fox St, Englewood", spots:4, total:7 },
-  { id:2, emoji:"🎲", tag:"Board Games", tagClass:"tag-games", imgClass:"games", title:"Game Night at Meeples", desc:"Settlers of Catan, Ticket to Ride, Codenames and more. Beginners absolutely welcome — we'll teach you everything.", date:"Sat, March 8", time:"6:00 – 9:00 PM", location:"Meeples Games, Denver", spots:5, total:12 },
-  { id:3, emoji:"🎳", tag:"Bowling", tagClass:"tag-bowling", imgClass:"bowling", title:"Cosmic Bowling Night", desc:"Glow lanes, chill music, and zero competitive pressure. Pure vibes — skill level absolutely doesn't matter.", date:"Fri, March 14", time:"7:30 – 10:00 PM", location:"Bowlero Denver", spots:8, total:16 },
-  { id:4, emoji:"🍽️", tag:"Dinner", tagClass:"tag-dinner", imgClass:"dinner", title:"Group Dinner — RiNo", desc:"Sit-down dinner in the RiNo Art District. Small table, good food, real conversation. Location TBA.", date:"Sat, March 22", time:"7:00 PM", location:"RiNo, Denver", spots:3, total:7 },
-  { id:5, emoji:"🏺", tag:"Pottery", tagClass:"tag-pottery", imgClass:"pottery", title:"Pottery Painting Social", desc:"Pick a piece, paint it your way, and hang out with cool people. Zero experience needed.", date:"Sun, March 30", time:"2:00 – 5:00 PM", location:"Color Me Mine, Denver", spots:6, total:10 },
-  { id:6, emoji:"🎲", tag:"Board Games", tagClass:"tag-games", imgClass:"games", title:"Strategy Game Night", desc:"Pandemic, Wingspan, Terraforming Mars. This month's theme: let's save (or terraform) the world.", date:"Sat, April 5", time:"5:00 – 9:00 PM", location:"Meeples Games, Denver", spots:0, total:10 }
+  { id:2, emoji:"🎲", tag:"Board Games", tagClass:"tag-games", imgClass:"games", title:"Game Night at Meeples", desc:"Settlers of Catan, Ticket to Ride, Codenames and more. Beginners absolutely welcome.", date:"Sat, March 8", time:"6:00 – 9:00 PM", location:"Meeples Games, Denver", spots:5, total:12 },
+  { id:3, emoji:"🎳", tag:"Bowling", tagClass:"tag-bowling", imgClass:"bowling", title:"Cosmic Bowling Night", desc:"Glow lanes, chill music, and zero competitive pressure. Pure vibes.", date:"Fri, March 14", time:"7:30 – 10:00 PM", location:"Bowlero Denver", spots:8, total:16 },
+  { id:4, emoji:"🍽️", tag:"Dinner", tagClass:"tag-dinner", imgClass:"dinner", title:"Group Dinner — RiNo", desc:"Sit-down dinner in the RiNo Art District. Small table, good food, real conversation.", date:"Sat, March 22", time:"7:00 PM", location:"RiNo, Denver", spots:3, total:7 },
+  { id:5, emoji:"🏺", tag:"Pottery", tagClass:"tag-pottery", imgClass:"pottery", title:"Pottery Painting Social", desc:"Pick a piece, paint it your way. Zero experience needed.", date:"Sun, March 30", time:"2:00 – 5:00 PM", location:"Color Me Mine, Denver", spots:6, total:10 },
+  { id:6, emoji:"🎲", tag:"Board Games", tagClass:"tag-games", imgClass:"games", title:"Strategy Game Night", desc:"Pandemic, Wingspan, Terraforming Mars.", date:"Sat, April 5", time:"5:00 – 9:00 PM", location:"Meeples Games, Denver", spots:0, total:10 }
 ];
-try { const s = localStorage.getItem('dsn_events'); if (s) events = JSON.parse(s); } catch(e) {}
-let currentEvent = null;
+let events = [];
+try { const s = localStorage.getItem('dsn_events'); events = s ? JSON.parse(s) : [...DEFAULT_EVENTS]; } catch(e) { events = [...DEFAULT_EVENTS]; }
 
+// ─── AUTH STATE ───
+let currentUser = null;
+let otpCode = null;
+let otpExpires = null;
+let pendingEmail = '';
+
+function loadUser() {
+  try { const s = localStorage.getItem('dsn_user'); if(s) currentUser = JSON.parse(s); } catch(e) {}
+}
+function saveUser() {
+  try { localStorage.setItem('dsn_user', JSON.stringify(currentUser)); } catch(e) {}
+}
+function updateNavBtn() {
+  const btn = document.getElementById('navLoginBtn');
+  const icon = document.getElementById('navLoginIcon');
+  const text = document.getElementById('navLoginText');
+  if (currentUser) {
+    btn.classList.add('logged-in');
+    icon.textContent = '👤';
+    text.textContent = currentUser.name ? currentUser.name.split(' ')[0] : 'My Profile';
+  } else {
+    btn.classList.remove('logged-in');
+    icon.textContent = '👤';
+    text.textContent = 'Sign In';
+  }
+}
+function handleNavLoginClick() {
+  if (currentUser) openProfile();
+  else openAuth();
+}
+
+// ─── AUTH ───
+function openAuth() {
+  showAuthStep(1);
+  document.getElementById('authEmail').value = '';
+  document.getElementById('authOverlay').classList.add('open');
+  setTimeout(() => document.getElementById('authEmail').focus(), 300);
+}
+function closeAuth() { document.getElementById('authOverlay').classList.remove('open'); }
+function closeAuthIfOutside(e) { if(e.target === document.getElementById('authOverlay')) closeAuth(); }
+function showAuthStep(n) {
+  document.querySelectorAll('.auth-step').forEach(s => s.classList.remove('active'));
+  document.getElementById('authStep'+n).classList.add('active');
+}
+function goBackToEmail() { showAuthStep(1); }
+
+async function sendOTP() {
+  const email = document.getElementById('authEmail').value.trim();
+  const errEl = document.getElementById('authError1');
+  errEl.classList.remove('show');
+  if (!email || !email.includes('@')) { errEl.textContent = 'Please enter a valid email.'; errEl.classList.add('show'); return; }
+  pendingEmail = email;
+  const btn = document.getElementById('sendOtpBtn');
+  btn.disabled = true; btn.textContent = 'Sending...';
+  try {
+    const res = await fetch('/api/send-otp', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email }) });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to send code');
+    otpCode = data.otp;
+    otpExpires = data.expires;
+    document.getElementById('otpSubText').textContent = `We sent a 6-digit code to ${email}`;
+    clearOtpInputs();
+    showAuthStep(2);
+    setTimeout(() => document.querySelector('#otpInputs input').focus(), 300);
+  } catch(err) {
+    errEl.textContent = err.message; errEl.classList.add('show');
+  }
+  btn.disabled = false; btn.textContent = 'Send My Code →';
+}
+
+function resendOTP() { showAuthStep(1); setTimeout(() => sendOTP(), 100); }
+
+function clearOtpInputs() {
+  document.querySelectorAll('#otpInputs input').forEach(i => i.value = '');
+}
+function otpInput(el, idx) {
+  el.value = el.value.replace(/\D/,'');
+  if (el.value && idx < 5) document.querySelectorAll('#otpInputs input')[idx+1].focus();
+  if (idx === 5 && el.value) verifyOTP();
+}
+function otpBack(e, idx) {
+  if (e.key === 'Backspace' && !e.target.value && idx > 0) document.querySelectorAll('#otpInputs input')[idx-1].focus();
+}
+
+function verifyOTP() {
+  const entered = [...document.querySelectorAll('#otpInputs input')].map(i => i.value).join('');
+  const errEl = document.getElementById('authError2');
+  errEl.classList.remove('show');
+  if (entered.length < 6) { errEl.textContent = 'Please enter the full 6-digit code.'; errEl.classList.add('show'); return; }
+  if (Date.now() > otpExpires) { errEl.textContent = 'Code expired. Please request a new one.'; errEl.classList.add('show'); return; }
+  if (entered !== otpCode) { errEl.textContent = 'Incorrect code. Please try again.'; errEl.classList.add('show'); clearOtpInputs(); document.querySelector('#otpInputs input').focus(); return; }
+
+  // Check if existing user
+  try {
+    const existing = localStorage.getItem('dsn_user');
+    if (existing) {
+      const u = JSON.parse(existing);
+      if (u.email === pendingEmail) {
+        currentUser = u; saveUser(); updateNavBtn(); closeAuth();
+        showToast(`Welcome back, ${currentUser.name || 'friend'}! 👋`);
+        return;
+      }
+    }
+  } catch(e) {}
+
+  // New user
+  showAuthStep(3);
+  setTimeout(() => document.getElementById('authName').focus(), 300);
+}
+
+function completeSignup() {
+  const name = document.getElementById('authName').value.trim();
+  currentUser = { email: pendingEmail, name: name || 'Friend', bio: '', prefs: [], rsvps: [], joinedAt: new Date().toISOString() };
+  saveUser(); updateNavBtn(); closeAuth();
+  showToast(`Welcome to Denver Social Nights, ${currentUser.name}! 🎉`);
+  setTimeout(() => openProfile(), 600);
+}
+
+function doLogout() {
+  currentUser = null;
+  try { localStorage.removeItem('dsn_user'); } catch(e) {}
+  updateNavBtn(); closeProfile();
+  showToast('Logged out. See you next time! 👋');
+}
+
+// ─── PROFILE ───
+function openProfile() {
+  if (!currentUser) return;
+  document.getElementById('profileNameDisplay').textContent = currentUser.name || 'Member';
+  document.getElementById('profileEmailDisplay').textContent = currentUser.email;
+  document.getElementById('profileAvatar').textContent = currentUser.name ? currentUser.name[0].toUpperCase() : '👤';
+  document.getElementById('profileName').value = currentUser.name || '';
+  document.getElementById('profileBio').value = currentUser.bio || '';
+  // Render prefs
+  document.querySelectorAll('.pref-chip').forEach(c => {
+    c.classList.toggle('selected', (currentUser.prefs||[]).includes(c.dataset.pref));
+  });
+  // Render rsvps
+  const hist = document.getElementById('rsvpHistory');
+  if ((currentUser.rsvps||[]).length === 0) {
+    hist.innerHTML = '<div class="empty-rsvps">No RSVPs yet — check out upcoming events and grab a spot!</div>';
+  } else {
+    hist.innerHTML = (currentUser.rsvps||[]).map(r => `
+      <div class="rsvp-item">
+        <div class="rsvp-item-emoji">${r.emoji || '🎉'}</div>
+        <div><div class="rsvp-item-name">${r.title}</div><div class="rsvp-item-date">${r.date}</div></div>
+      </div>`).join('');
+  }
+  document.getElementById('profileOverlay').classList.add('open');
+}
+function closeProfile() { document.getElementById('profileOverlay').classList.remove('open'); }
+function closeProfileIfOutside(e) { if(e.target === document.getElementById('profileOverlay')) closeProfile(); }
+
+function togglePref(el) { el.classList.toggle('selected'); }
+
+function saveProfile() {
+  currentUser.name = document.getElementById('profileName').value.trim() || currentUser.name;
+  currentUser.bio = document.getElementById('profileBio').value.trim();
+  currentUser.prefs = [...document.querySelectorAll('.pref-chip.selected')].map(c => c.dataset.pref);
+  saveUser(); updateNavBtn();
+  document.getElementById('profileNameDisplay').textContent = currentUser.name;
+  document.getElementById('profileAvatar').textContent = currentUser.name[0].toUpperCase();
+  showToast('Profile saved! ✓');
+}
+
+// ─── RSVP MODAL ───
+let currentEvent = null;
+function openRSVP(ev) {
+  currentEvent = ev;
+  if (currentUser) {
+    document.getElementById('rsvpName').value = currentUser.name || '';
+    document.getElementById('rsvpEmail').value = currentUser.email || '';
+  } else {
+    document.getElementById('rsvpName').value = '';
+    document.getElementById('rsvpEmail').value = '';
+  }
+  document.getElementById('modalEmoji').textContent = ev.emoji;
+  document.getElementById('modalTitle').textContent = ev.title;
+  document.getElementById('modalMeta').innerHTML = `📅 ${ev.date} · ${ev.time}<br>📍 ${ev.location}`;
+  document.getElementById('modalForm').classList.remove('hidden');
+  document.getElementById('modalSuccess').classList.remove('visible');
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeRSVPModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+function closeRSVPIfOutside(e) { if(e.target === document.getElementById('modalOverlay')) closeRSVPModal(); }
+
+function submitRSVP() {
+  const name = document.getElementById('rsvpName').value.trim();
+  const email = document.getElementById('rsvpEmail').value.trim();
+  if (!name || !email) { showToast('Please fill in your name and email!'); return; }
+  if (currentUser) {
+    currentUser.rsvps = currentUser.rsvps || [];
+    currentUser.rsvps.push({ title: currentEvent.title, date: currentEvent.date, emoji: currentEvent.emoji });
+    saveUser();
+  }
+  document.getElementById('modalForm').classList.add('hidden');
+  document.getElementById('modalSuccess').classList.add('visible');
+  document.getElementById('successMsg').textContent = `Hey ${name}! You're on the list for ${currentEvent.title} on ${currentEvent.date}. We'll send details to ${email} before the event. Can't wait to meet you! 🎉`;
+  const btn = document.getElementById(`btn-${currentEvent.id}`);
+  if (btn) { btn.textContent = '✓ Going!'; btn.classList.add('confirmed'); }
+}
+
+// ─── RENDER ───
 function renderHeroCards() {
   document.getElementById('heroCards').innerHTML = events.filter(e => e.spots > 0).slice(0,3).map(e => `
     <div class="hero-card">
@@ -288,12 +653,10 @@ function renderHeroCards() {
       <div class="hc-badge">${e.spots} left</div>
     </div>`).join('');
 }
-
 function renderMarquee() {
   const items = ['🍜 Asian Dinners','🎲 Game Nights','🎳 Bowling Nights','🏺 Pottery Painting','🍽️ Group Dinners','✨ New Events Monthly','📍 All Over Denver','💛 Everyone Welcome'];
   document.getElementById('marqueeTrack').innerHTML = [...items,...items].map(i => `<div class="marquee-item"><span>·</span>${i}</div>`).join('');
 }
-
 function renderEvents() {
   document.getElementById('eventsGrid').innerHTML = events.map((e,i) => {
     const isFull = e.spots === 0;
@@ -316,34 +679,15 @@ function renderEvents() {
   }).join('');
 }
 
-function openRSVP(ev) {
-  currentEvent = ev;
-  document.getElementById('modalEmoji').textContent = ev.emoji;
-  document.getElementById('modalTitle').textContent = ev.title;
-  document.getElementById('modalMeta').innerHTML = `📅 ${ev.date} · ${ev.time}<br>📍 ${ev.location}`;
-  document.getElementById('modalForm').classList.remove('hidden');
-  document.getElementById('modalSuccess').classList.remove('visible');
-  document.getElementById('rsvpName').value = '';
-  document.getElementById('rsvpEmail').value = '';
-  document.getElementById('modalOverlay').classList.add('open');
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-function closeModal(e) { if (e.target===document.getElementById('modalOverlay')) closeModalDirect(); }
-function closeModalDirect() { document.getElementById('modalOverlay').classList.remove('open'); }
+document.addEventListener('keydown', e => { if (e.key==='Escape') { closeAuth(); closeProfile(); closeRSVPModal(); } });
 
-function submitRSVP() {
-  const name = document.getElementById('rsvpName').value.trim();
-  const email = document.getElementById('rsvpEmail').value.trim();
-  if (!name||!email) { alert('Please fill in your name and email!'); return; }
-  document.getElementById('modalForm').classList.add('hidden');
-  document.getElementById('modalSuccess').classList.add('visible');
-  document.getElementById('successMsg').textContent = `Hey ${name}! You're on the list for ${currentEvent.title} on ${currentEvent.date}. We'll send details to ${email} before the event. Can't wait to meet you! 🎉`;
-  const btn = document.getElementById(`btn-${currentEvent.id}`);
-  if (btn) { btn.textContent='✓ Going!'; btn.classList.add('confirmed'); }
-}
-
-document.addEventListener('keydown', e => { if (e.key==='Escape') closeModalDirect(); });
-renderHeroCards(); renderMarquee(); renderEvents();
+loadUser(); updateNavBtn(); renderHeroCards(); renderMarquee(); renderEvents();
 </script>
 </body>
 </html>
